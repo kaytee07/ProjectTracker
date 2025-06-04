@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
@@ -26,9 +28,13 @@ public class Developer {
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "skill")
-    private Skill Skill;
+    @ManyToMany
+    @JoinTable(
+            name = "developer_skill",
+            joinColumns = @JoinColumn(name = "developer_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id")
+    )
+    private Set<Skill> skills = new HashSet<>();
 
     @OneToMany(mappedBy = "developer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
