@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Data
-@Entity
+@Entity(name = "Task")
 public class Task {
     @Id
     @SequenceGenerator(
@@ -25,6 +25,7 @@ public class Task {
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false )
     private Status status;
 

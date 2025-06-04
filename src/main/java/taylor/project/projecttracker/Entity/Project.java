@@ -9,7 +9,7 @@ import java.util.List;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Data
-@Entity
+@Entity(name = "Project")
 public class Project {
 
     @Id
