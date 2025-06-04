@@ -14,8 +14,8 @@ public class Project {
 
     @Id
     @SequenceGenerator(
-            name = "student_sequence",
-            sequenceName = "student_sequence",
+            name = "project_sequence",
+            sequenceName = "project_sequence",
             allocationSize = 1
     )
     @GeneratedValue(strategy = SEQUENCE, generator = "student_sequence")
