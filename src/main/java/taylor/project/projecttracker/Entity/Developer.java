@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
@@ -53,6 +54,21 @@ public class Developer {
     public void removeTask(Task task) {
         tasks.remove(task);
         task.setDeveloper(null);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, email);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Developer developer = (Developer) o;
+        return Objects.equals(id, developer.id) &&
+                Objects.equals(name, developer.name) &&
+                Objects.equals(email, developer.email);
     }
 }
 

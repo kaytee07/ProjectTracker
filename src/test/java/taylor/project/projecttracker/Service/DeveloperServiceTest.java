@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import taylor.project.projecttracker.Entity.AuditLog;
 import taylor.project.projecttracker.Entity.Developer;
+import taylor.project.projecttracker.Entity.Skill;
 import taylor.project.projecttracker.Repository.AuditLogRepository;
 import taylor.project.projecttracker.Repository.DeveloperRepository;
 
@@ -35,9 +36,10 @@ class DeveloperServiceTest {
         developer.setId(1L);
         developer.setName("John Doe");
         developer.setEmail("john.doe@example.com");
-        developer.setSkills(Set.of("Java", "Spring"));
+        developer.setSkills(Set.of(new Skill("Java"), new Skill("Python")));
         return developer;
     }
+
 
     @Test
     void createDeveloper_shouldSaveDeveloperAndLogAction() {
@@ -62,28 +64,25 @@ class DeveloperServiceTest {
 
     @Test
     void updateDeveloper_shouldUpdateExistingDeveloperAndLogAction() {
-        // Arrange
         Long developerId = 1L;
         Developer existingDeveloper = createTestDeveloper();
         Developer updatedDeveloper = createTestDeveloper();
         updatedDeveloper.setName("Updated Name");
         updatedDeveloper.setEmail("updated@example.com");
-        updatedDeveloper.setSkills(Set.of("Java", "Spring", "Kubernetes"));
+        updatedDeveloper.setSkills(Set.of(new Skill("Java"), new Skill("Spring"), new Skill("Kubernetes")));
         String actorName = "admin";
 
         when(developerRepository.findById(developerId)).thenReturn(Optional.of(existingDeveloper));
         when(developerRepository.save(any(Developer.class))).thenReturn(updatedDeveloper);
         when(auditLogRepository.save(any(AuditLog.class))).thenReturn(new AuditLog());
 
-        // Act
         Developer result = developerService.updateDeveloper(developerId, updatedDeveloper, actorName);
 
-        // Assert
         assertNotNull(result);
         assertEquals("Updated Name", result.getName());
         assertEquals("updated@example.com", result.getEmail());
         assertEquals(3, result.getSkills().size());
-        assertTrue(result.getSkills().contains("Kubernetes"));
+        assertTrue(result.getSkills().contains(new Skill("Kubernetes")));
 
         verify(developerRepository, times(1)).save(existingDeveloper);
         verify(auditLogRepository, times(1)).save(any(AuditLog.class));
@@ -91,12 +90,10 @@ class DeveloperServiceTest {
 
     @Test
     void updateDeveloper_shouldThrowExceptionWhenDeveloperNotFound() {
-        // Arrange
         Long nonExistentId = 99L;
         Developer updatedDeveloper = createTestDeveloper();
         when(developerRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(EntityNotFoundException.class, () -> {
             developerService.updateDeveloper(nonExistentId, updatedDeveloper, "admin");
         });
