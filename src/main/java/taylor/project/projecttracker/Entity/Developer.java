@@ -1,6 +1,8 @@
 package taylor.project.projecttracker.Entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +15,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Data
 @Entity(name = "Developer")
+@NoArgsConstructor
 @AllArgsConstructor
 public class Developer {
 
@@ -22,9 +25,12 @@ public class Developer {
     @Column(name = "id", updatable = false)
     private long id;
 
+    @NotBlank(message = "Name is required")
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email must be valid")
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
@@ -39,15 +45,16 @@ public class Developer {
     @OneToMany(mappedBy = "developer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
 
-    public Developer(){}
-
     public void addTask(Task task) {
         tasks.add(task);
-    }
-    public void removeTask(Task task) {
-        tasks.remove(task);
+        task.setDeveloper(this);
     }
 
+    public void removeTask(Task task) {
+        tasks.remove(task);
+        task.setDeveloper(null);
+    }
 }
+
 
 
