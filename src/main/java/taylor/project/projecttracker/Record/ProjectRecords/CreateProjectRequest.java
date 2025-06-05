@@ -1,9 +1,12 @@
 package taylor.project.projecttracker.Record.ProjectRecords;
+import taylor.project.projecttracker.Entity.Status;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record CreateProjectRequest(
         String name,
         String description,
-        LocalDate deadline,
-        String status
+        LocalDateTime deadline,
+        Status status
 ) {}

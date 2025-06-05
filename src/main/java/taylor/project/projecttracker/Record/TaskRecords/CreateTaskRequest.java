@@ -1,4 +1,11 @@
 package taylor.project.projecttracker.Record.TaskRecords;
 
-public record CreateTaskRequest() {
-}
+import java.time.LocalDate;
+
+public record CreateTaskRequest(
+        String title,
+        String description,
+        LocalDate dueDate,
+        String status,
+        Long projectId
+) {}
