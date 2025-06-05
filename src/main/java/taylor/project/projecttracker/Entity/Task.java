@@ -1,6 +1,9 @@
 package taylor.project.projecttracker.Entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -10,6 +13,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Data
 @Entity(name = "Task")
 public class Task {
+
     @Id
     @SequenceGenerator(
             name = "task_sequence",
@@ -19,17 +23,22 @@ public class Task {
     @GeneratedValue(strategy = SEQUENCE, generator = "task_sequence")
     private long id;
 
+    @NotBlank(message = "Title is required")
     @Column(name = "title", nullable = false, columnDefinition = "TEXT")
     private String title;
 
+    @NotBlank(message = "Description is required")
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 
+    @NotNull(message = "Status is required")
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false )
+    @Column(name = "status", nullable = false)
     private Status status;
 
-    @Column(name = "duedate", nullable = false )
+    @NotNull(message = "Due date is required")
+    @FutureOrPresent(message = "Due date must be in the present or future")
+    @Column(name = "duedate", nullable = false)
     private LocalDateTime dueDate;
 
     @ManyToOne
@@ -40,7 +49,7 @@ public class Task {
     @JoinColumn(name = "developer_id")
     private Developer developer;
 
-
     public Task() {}
 }
+
 
