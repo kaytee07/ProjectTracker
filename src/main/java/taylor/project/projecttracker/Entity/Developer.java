@@ -43,7 +43,7 @@ public class Developer {
     private Set<Skill> skills = new HashSet<>();
 
     @OneToMany(mappedBy = "developer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JsonIgnore // Prevents Developer -> Task -> Developer serialization cycle
+    @JsonIgnore
     private List<Task> tasks;
 
     public void addSkill(Skill skill) {

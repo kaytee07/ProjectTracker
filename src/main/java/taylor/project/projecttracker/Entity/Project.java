@@ -51,7 +51,7 @@ public class Project {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    @EqualsAndHashCode.Exclude // Add this to prevent equals/hashCode recursion
+    @EqualsAndHashCode.Exclude
     private List<Task> tasks = new ArrayList<>();
 
     public Project() {}

@@ -30,8 +30,8 @@ public class Skill {
     private String name;
 
     @ManyToMany(mappedBy = "skills")
-    @ToString.Exclude          // Exclude 'developers' from Lombok's generated toString()
-    @JsonIgnore                // Exclude 'developers' from JSON serialization
+    @ToString.Exclude
+    @JsonIgnore
     private Set<Developer> developers = new HashSet<>();
 
     public Skill(String name) {

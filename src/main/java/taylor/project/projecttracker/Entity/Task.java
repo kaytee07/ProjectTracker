@@ -47,15 +47,15 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name = "project_id")
-    @JsonBackReference // Correctly set on the "child" side
-    @ToString.Exclude // Prevents Project -> Task -> Project toString() loop
-    @EqualsAndHashCode.Exclude // Prevents Project -> Task -> Project equals/hashCode loop
+    @JsonBackReference
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Project project;
 
     @ManyToOne
     @JoinColumn(name = "developer_id", nullable = true)
-    @ToString.Exclude // Prevents Developer -> Task -> Developer toString() loop
-    @EqualsAndHashCode.Exclude // Prevents Developer -> Task -> Developer equals/hashCode loop
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Developer developer;
 
     public Task() {}
