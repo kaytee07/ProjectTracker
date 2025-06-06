@@ -1,7 +1,7 @@
 package taylor.project.projecttracker.Controller;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Page;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import taylor.project.projecttracker.Entity.Developer;

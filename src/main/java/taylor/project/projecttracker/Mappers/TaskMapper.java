@@ -30,8 +30,9 @@ public class TaskMapper {
                 task.getDescription(),
                 task.getDueDate(),
                 task.getStatus(),
-                task.getDeveloper() != null ? task.getDeveloper().getId() : null,
+                task.getProject() != null ? task.getProject().getId() : null,
                 task.getDeveloper() != null ? task.getDeveloper().getId() : null
+
 
         );
     }

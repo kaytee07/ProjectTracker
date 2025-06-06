@@ -11,6 +11,9 @@ import java.util.Set;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
+import com.fasterxml.jackson.annotation.JsonIgnore; // Import this
+import lombok.ToString;
+
 @Data
 @NoArgsConstructor
 @Entity(name = "Skill")
@@ -27,19 +30,24 @@ public class Skill {
     private String name;
 
     @ManyToMany(mappedBy = "skills")
+    @ToString.Exclude          // Exclude 'developers' from Lombok's generated toString()
+    @JsonIgnore                // Exclude 'developers' from JSON serialization
     private Set<Developer> developers = new HashSet<>();
 
     public Skill(String name) {
         this.name = name;
     }
 
+
+
     public void addDeveloper(Developer developer) {
-        developers.add(developer);
+        this.developers.add(developer);
         developer.getSkills().add(this);
     }
 
+
     public void removeDeveloper(Developer developer) {
-        developers.remove(developer);
+        this.developers.remove(developer);
         developer.getSkills().remove(this);
     }
 
@@ -55,5 +63,4 @@ public class Skill {
         Skill skill = (Skill) o;
         return id == skill.id && Objects.equals(name, skill.name);
     }
-
 }

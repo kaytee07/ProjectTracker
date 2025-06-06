@@ -13,6 +13,7 @@ import java.util.List;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
+    Task findById(long id);
     List<Task> findByProjectId(Long projectId);
     List<Task> findByDeveloperId(Long developerId);
     @Modifying

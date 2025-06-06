@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import taylor.project.projecttracker.Entity.AuditLog;
 import taylor.project.projecttracker.Entity.Developer;
 import taylor.project.projecttracker.Entity.Skill;
+import taylor.project.projecttracker.Exception.SkillNotFoundException;
+import taylor.project.projecttracker.Mappers.SkillMapper;
+import taylor.project.projecttracker.Record.SkillRecords.SkillResponse;
 import taylor.project.projecttracker.Repository.AuditLogRepository;
 import taylor.project.projecttracker.Repository.DeveloperRepository;
 import taylor.project.projecttracker.Repository.SkillRepository;
@@ -27,23 +30,27 @@ public class SkillService {
             throw new IllegalArgumentException("Skill with this name already exists");
         }
         Skill saved = skillRepository.save(skill);
-        logAction("CREATE", "Skill", String.valueOf(saved.getId()), actorName, saved);
+        logAction("CREATE", "Skill", String.valueOf(saved.getId()), actorName, SkillMapper.toResponse(saved));
         return saved;
     }
 
     public Skill updateSkill(long id, Skill updatedSkill, String actorName) {
         Skill existing = skillRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Skill not found"));
+                .orElseThrow(() -> new SkillNotFoundException("Skill not found"));
         existing.setName(updatedSkill.getName());
         Skill saved = skillRepository.save(existing);
-        logAction("UPDATE", "Skill", String.valueOf(saved.getId()), actorName, saved);
+        logAction("UPDATE", "Skill", String.valueOf(saved.getId()), actorName, SkillMapper.toResponse(saved));
         return saved;
+    }
+
+    public Skill getSkillById(long id) {
+        return skillRepository.findById(id).orElseThrow(() -> new SkillNotFoundException("Skill Not Found"));
     }
 
     public void deleteSkill(long id, String actorName) {
         skillRepository.findById(id).ifPresent(skill -> {
             skillRepository.delete(skill);
-            logAction("DELETE", "Skill", String.valueOf(id), actorName, skill);
+            logAction("DELETE", "Skill", String.valueOf(id), actorName, SkillMapper.toResponse(skill));
         });
     }
 
@@ -53,25 +60,25 @@ public class SkillService {
 
     public Skill addSkillToDeveloper(long skillId, Long developerId, String actorName) {
         Skill skill = skillRepository.findById(skillId)
-                .orElseThrow(() -> new EntityNotFoundException("Skill not found"));
+                .orElseThrow(() -> new SkillNotFoundException("Skill not found"));
         Developer developer = developerRepository.findById(developerId)
-                .orElseThrow(() -> new EntityNotFoundException("Developer not found"));
+                .orElseThrow(() -> new SkillNotFoundException("Developer not found"));
 
         skill.addDeveloper(developer);
         Skill saved = skillRepository.save(skill);
-        logAction("UPDATE", "Skill", String.valueOf(saved.getId()), actorName, saved);
+        logAction("UPDATE", "Skill", String.valueOf(saved.getId()), actorName, SkillMapper.toResponse(saved));
         return saved;
     }
 
     public Skill removeSkillFromDeveloper(long skillId, Long developerId, String actorName) {
         Skill skill = skillRepository.findById(skillId)
-                .orElseThrow(() -> new EntityNotFoundException("Skill not found"));
+                .orElseThrow(() -> new SkillNotFoundException("Skill not found"));
         Developer developer = developerRepository.findById(developerId)
-                .orElseThrow(() -> new EntityNotFoundException("Developer not found"));
+                .orElseThrow(() -> new SkillNotFoundException("Developer not found"));
 
         skill.removeDeveloper(developer);
         Skill saved = skillRepository.save(skill);
-        logAction("UPDATE", "Skill", String.valueOf(saved.getId()), actorName, saved);
+        logAction("UPDATE", "Skill", String.valueOf(saved.getId()), actorName, SkillMapper.toResponse(saved));
         return saved;
     }
 
@@ -86,4 +93,3 @@ public class SkillService {
         auditLogRepository.save(log);
     }
 }
-

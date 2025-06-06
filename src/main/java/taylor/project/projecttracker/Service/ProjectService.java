@@ -39,7 +39,7 @@ public class ProjectService {
         project.setStatus(request.status());
         project.setDeadline(request.deadline());
         Project saved = projectRepository.save(project);
-        logAction("CREATE", "Project", saved.getId().toString(), actorName, saved);
+        logAction("CREATE", "Project", saved.getId().toString(), actorName, ProjectMapper.toResponse(saved));
         return ProjectMapper.toResponse(saved);
     }
 
@@ -64,7 +64,7 @@ public class ProjectService {
         existingProject.setDeadline(updatedProject.deadline());
         existingProject.setStatus(updatedProject.status());
         Project saved = projectRepository.save(existingProject);
-        logAction("UPDATE", "Project", saved.getId().toString(), actorName, saved);
+        logAction("UPDATE", "Project", saved.getId().toString(), actorName, ProjectMapper.toResponse(saved));
         return ProjectMapper.toResponse(saved);
     }
 
@@ -83,7 +83,7 @@ public class ProjectService {
                 .orElseThrow(() -> new ProjectNotFoundExpetion("Project with ID " + id + " not found"));
         taskRepository.deleteByProjectId(id);
         projectRepository.delete(project);
-        logAction("DELETE", "Project", id.toString(), actorName, project);
+        logAction("DELETE", "Project", id.toString(), actorName, ProjectMapper.toResponse(project));
     }
 
     private void logAction(String actionType, String entityType, String entityId, String actorName, Object payload) {
@@ -93,7 +93,7 @@ public class ProjectService {
         log.setEntityId(entityId);
         log.setActorName(actorName);
         log.setTimestamp(Instant.now());
-        log.setPayload(Map.of("data", payload));  // You might want to customize serialization
+        log.setPayload(Map.of("data", payload));
         auditLogRepository.save(log);
     }
 }

@@ -3,7 +3,7 @@ package taylor.project.projecttracker.Service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Page;
+import org.springframework.data.domain.Page;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
@@ -42,22 +42,22 @@ public class DeveloperService {
 
     public Developer createDeveloper(Developer developer, String actorName) {
         Developer saved = developerRepository.save(developer);
-        logAction("CREATE", "Developer", String.valueOf(saved.getId()), actorName, saved);
+        logAction("CREATE", "Developer", String.valueOf(saved.getId()), actorName, DeveloperMapper.toResponse(saved));
         return saved;
     }
 
-    @CacheEvict(value = "developers", key = "#developerId")
+    @CacheEvict(value = "developers", key = "#id")
     public Developer updateDeveloper(Long id, UpdateDeveloperRequest updatedDeveloper, String actorName) {
         Developer existing = developerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Developer not found"));
         existing.setName(updatedDeveloper.name());
         existing.setEmail(updatedDeveloper.email());
         Developer saved = developerRepository.save(existing);
-        logAction("UPDATE", "Developer", String.valueOf(saved.getId()), actorName, saved);
+        logAction("UPDATE", "Developer", String.valueOf(saved.getId()), actorName, DeveloperMapper.toResponse(saved));
         return saved;
     }
 
-    @CacheEvict(value = "developers", key = "#developerId")
+    @CacheEvict(value = "developers", key = "#id")
     @Transactional
     public void deleteDeveloper(Long id, String actorName) {
         developerRepository.findById(id).ifPresent(dev -> {
@@ -67,21 +67,21 @@ public class DeveloperService {
             }
             taskRepository.saveAll(tasks);
             developerRepository.delete(dev);
-            logAction("DELETE", "Developer", String.valueOf(id), actorName, dev);
+            logAction("DELETE", "Developer", String.valueOf(id), actorName, DeveloperMapper.toResponse(dev));
         });
     }
 
-
-    @Cacheable(value = "developers", key = "#developerId")
+    @Cacheable(value = "developers", key = "#id")
     public Developer getDeveloper(Long id) {
         return developerRepository.findById(id).orElseThrow(() -> new DeveloperNotFoundException("Developer not found"));
     }
 
-    @Cacheable(value = "developers", key = "#developerId")
+    @Cacheable(value = "developers", key = "#id")
     public List<Developer> findAllDevelopers() {
         return developerRepository.findAll();
     }
-    @CacheEvict(value = "developers", key = "#developerId")
+
+    @CacheEvict(value = "developers", key = "#id")
     public Developer updateDeveloperSkills(Long developerId, UpdateDeveloperSkillRequest request) {
         Developer developer = developerRepository.findById(developerId)
                 .orElseThrow(() -> new DeveloperNotFoundException("Developer with id " + developerId + " not found"));
@@ -93,21 +93,21 @@ public class DeveloperService {
         return developerRepository.save(developer);
     }
 
-    @Cacheable(value = "developers", key = "#developerId")
-    public Page getPaginatedDevelopers(int page, int size, String sortBy, String direction) {
+//    @Cacheable(value = "developers", key = "#page + '-' + #size + '-' + #sortBy + '-' + #direction")
+    public Page<Developer> getPaginatedDevelopers(int page, int size, String sortBy, String direction) {
         Pageable pageable = PageRequest.of(
                 page, size,
                 direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending()
         );
-        return (Page) developerRepository.findAll(pageable)
-                .map(DeveloperMapper::toResponse);
+
+        return developerRepository.findAll(pageable);
+
     }
 
-    @Cacheable(value = "developers", key = "#developerId")
+    @Cacheable(value = "developers", key = "#id")
     public List<DeveloperTaskCount> getTop5DevelopersByTaskCount() {
         return developerRepository.findTop5DevelopersByTaskCount(PageRequest.of(0, 5));
     }
-
 
     private void logAction(String actionType, String entityType, String entityId, String actorName, Object payload) {
         AuditLog log = new AuditLog();
@@ -120,4 +120,3 @@ public class DeveloperService {
         auditLogRepository.save(log);
     }
 }
-

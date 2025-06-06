@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import taylor.project.projecttracker.Entity.Developer;
 import taylor.project.projecttracker.Entity.Skill;
+import taylor.project.projecttracker.Mappers.SkillMapper;
+import taylor.project.projecttracker.Mappers.TaskMapper;
 import taylor.project.projecttracker.Record.DeveloperRecords.DeveloperResponse;
 import taylor.project.projecttracker.Record.SkillRecords.SkillResponse;
 import taylor.project.projecttracker.Service.SkillService;
@@ -45,6 +47,10 @@ public class SkillController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<SkillResponse> getSkillsById(@PathVariable Long id ,@RequestParam String actorName) {
+        return ResponseEntity.ok(SkillMapper.toResponse(skillService.getSkillById(1)));
+    }
 
     @GetMapping
     public ResponseEntity<List<SkillResponse>> getAllSkills() {

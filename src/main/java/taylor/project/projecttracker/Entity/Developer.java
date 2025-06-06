@@ -8,12 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
+
 
 @Data
 @Entity(name = "Developer")
@@ -45,7 +43,7 @@ public class Developer {
     private Set<Skill> skills = new HashSet<>();
 
     @OneToMany(mappedBy = "developer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JsonIgnore
+    @JsonIgnore // Prevents Developer -> Task -> Developer serialization cycle
     private List<Task> tasks;
 
     public void addSkill(Skill skill) {
@@ -57,13 +55,18 @@ public class Developer {
     }
 
     public void addTask(Task task) {
+        if (tasks == null) {
+            tasks = new ArrayList<>();
+        }
         tasks.add(task);
         task.setDeveloper(this);
     }
 
     public void removeTask(Task task) {
-        tasks.remove(task);
-        task.setDeveloper(null);
+        if (tasks != null) {
+            tasks.remove(task);
+            task.setDeveloper(null);
+        }
     }
 
     @Override
@@ -86,6 +89,5 @@ public class Developer {
                 Objects.equals(email, developer.email);
     }
 }
-
 
 

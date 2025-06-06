@@ -14,6 +14,10 @@ import java.util.List;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+
 @Data
 @Entity(name = "Project")
 public class Project {
@@ -24,7 +28,7 @@ public class Project {
             sequenceName = "project_sequence",
             allocationSize = 1
     )
-    @GeneratedValue(strategy = SEQUENCE, generator = "project_sequence") // fixed typo here
+    @GeneratedValue(strategy = SEQUENCE, generator = "project_sequence")
     private Long id;
 
     @NotBlank(message = "Project name is required")
@@ -47,6 +51,7 @@ public class Project {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
+    @EqualsAndHashCode.Exclude // Add this to prevent equals/hashCode recursion
     private List<Task> tasks = new ArrayList<>();
 
     public Project() {}
@@ -58,6 +63,7 @@ public class Project {
     public void remove(Task task) {
         tasks.remove(task);
     }
+
 
     @Override
     public String toString() {

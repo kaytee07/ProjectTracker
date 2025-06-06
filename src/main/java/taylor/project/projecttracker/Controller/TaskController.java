@@ -29,6 +29,11 @@ public class TaskController {
         return ResponseEntity.ok(TaskMapper.toResponse(taskService.createTask(request, actorName, project)));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<TaskResponse> getTaskById(@RequestParam Long id) {
+        return ResponseEntity.ok(TaskMapper.toResponse(taskService.findTaskById(id)));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<TaskResponse> updateTask(@PathVariable Long id, @RequestBody UpdateTaskRequest request, @RequestParam String actorName) {
         return ResponseEntity.ok(TaskMapper.toResponse(taskService.updateTask(id, request, actorName)));
@@ -40,12 +45,12 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/by-project/{projectId}")
+    @GetMapping("/byproject/{id}")
     public ResponseEntity<List<TaskResponse>> getTasksByProject(@PathVariable Long projectId) {
         return ResponseEntity.ok(taskService.getTasksByProject(projectId));
     }
 
-    @GetMapping("/by-developer/{developerId}")
+    @GetMapping("/bydeveloper/{developerId}")
     public ResponseEntity<List<TaskResponse>> getTasksByDeveloper(@PathVariable Long developerId) {
         return ResponseEntity.ok(taskService.getTasksByDeveloper(developerId));
     }
