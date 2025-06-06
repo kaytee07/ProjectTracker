@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import taylor.project.projecttracker.Entity.Developer;
 import taylor.project.projecttracker.Mappers.DeveloperMapper;
-import taylor.project.projecttracker.Record.DeveloperRecord.*;
 
 import taylor.project.projecttracker.Record.DeveloperRecords.CreateDeveloperRequest;
 import taylor.project.projecttracker.Record.DeveloperRecords.DeveloperResponse;

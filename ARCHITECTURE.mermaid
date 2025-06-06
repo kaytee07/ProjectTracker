@@ -1,0 +1,52 @@
+graph TD
+    subgraph Frontend
+        A[React UI]
+        A2[Postman]
+    end
+
+    subgraph API_Layer
+        B[Spring Controllers]
+    end
+
+    subgraph Service_Layer
+        C[Project Service]
+        C2[Developer Service]
+        C3[Skill Service]
+        C4[Audit Service]
+    end
+
+    subgraph Repository_Layer
+        D1[JPA - PostgreSQL]
+        D2[MongoDB Repository]
+    end
+
+    subgraph Databases
+        E[(PostgreSQL)]
+        F[(MongoDB)]
+    end
+
+    A -->|HTTP| B
+    A2 -->|Tests| B
+    B --> C
+    B --> C2
+    B --> C3
+    B --> C4
+
+    C --> D1
+    C2 --> D1
+    C3 --> D1
+    C4 --> D2
+
+    D1 --> E
+    D2 --> F
+
+    D1 --> C
+    D1 --> C2
+    D1 --> C3
+    D2 --> C4
+
+    C --> B
+    C2 --> B
+    C3 --> B
+    C4 --> B
+    B --> A
