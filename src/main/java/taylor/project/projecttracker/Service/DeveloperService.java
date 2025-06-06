@@ -93,7 +93,7 @@ public class DeveloperService {
         return developerRepository.save(developer);
     }
 
-//    @Cacheable(value = "developers", key = "#page + '-' + #size + '-' + #sortBy + '-' + #direction")
+    @Cacheable(value = "developers", key = "#page + '-' + #size + '-' + #sortBy + '-' + #direction")
     public Page<Developer> getPaginatedDevelopers(int page, int size, String sortBy, String direction) {
         Pageable pageable = PageRequest.of(
                 page, size,
@@ -102,6 +102,17 @@ public class DeveloperService {
 
         return developerRepository.findAll(pageable);
 
+    }
+
+    public List<DeveloperResponse> getAllDevelopersSorted(String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        return developerRepository.findAll(sort)
+                .stream()
+                .map(DeveloperMapper::toResponse)
+                .toList();
     }
 
     @Cacheable(value = "developers", key = "#id")

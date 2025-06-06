@@ -145,20 +145,20 @@ POST /api/projects
 
 ## 📸 Sample Request/Response
 
-### Create Project – POST /api/projects
-📷 *Insert screenshot of request + response here*
+### Create Project – POST /api/projects?actorName=KofiTaylor
+📷 ![System Flow](screenshots/CreateProjectPostRe.png)
 
-### Get All Tasks Sorted – GET /api/tasks/sorted?sortBy=dueDate&direction=asc
-📷 *Insert screenshot of response here*
+### Create Task – POST /api/tasks?actorName=KofiTaylor
+📷 ![System Flow](screenshots/CreateTaskPostRequest.png)
 
-### Create Developer – POST /api/developers
-📷 *Insert screenshot of JSON body with skills here*
+### Get Developer Paginated – GET /api/developers/paginated?page=0&size=5&sortBy=name&direction=asc
+📷 ![System Flow](screenshots/getDeveloperPaginatedRequest.png)
 
-### Audit Logs – GET /logs?actorName=Patrick
-📷 *Insert screenshot showing logs from MongoDB here*
+### Update Task – PUT /api/tasks/1?actorName=KofiTaylor
+📷![System Flow](screenshots/UpdateTaskPutRequest.png)
 
 ### Swagger UI
-📷 *Insert screenshot of Swagger UI with available endpoints here*
+📷 📷![System Flow](screenshots/swaggerUI.png)
 
 ## ✨ Features
 - Transactional operations

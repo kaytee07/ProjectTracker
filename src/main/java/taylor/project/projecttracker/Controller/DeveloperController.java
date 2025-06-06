@@ -47,6 +47,13 @@ public class DeveloperController {
         return ResponseEntity.ok(DeveloperMapper.toResponseList(developerService.findAllDevelopers()));
     }
 
+    @GetMapping("/developers/sorted")
+    public List<DeveloperResponse> getSortedDevelopers(
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+        return developerService.getAllDevelopersSorted(sortBy, direction);
+    }
+
     @PutMapping("/{developerId}/skills")
     public ResponseEntity<DeveloperResponse> updateSkills(@PathVariable Long developerId,
                                                           @RequestBody UpdateDeveloperSkillRequest request) {
