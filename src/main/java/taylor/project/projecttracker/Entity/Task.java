@@ -1,10 +1,14 @@
 package taylor.project.projecttracker.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -43,13 +47,24 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name = "project_id")
+    @JsonBackReference
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "developer_id")
+    @JoinColumn(name = "developer_id", nullable = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Developer developer;
 
     public Task() {}
+
+    @Override
+    public String toString() {
+        return "Task{id=" + id + ", title=" + title + ", description=" + description +
+                ", dueDate=" + dueDate + ", status=" + status + "}";
+    }
 }
 
 

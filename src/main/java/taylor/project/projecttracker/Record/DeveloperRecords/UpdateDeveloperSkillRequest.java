@@ -2,9 +2,6 @@ package taylor.project.projecttracker.Record.DeveloperRecords;
 
 import java.util.Set;
 
-public record DeveloperResponse(
-        Long id,
-        String name,
-        String email,
+public record UpdateDeveloperSkillRequest(
         Set<Long> skills
 ) {}

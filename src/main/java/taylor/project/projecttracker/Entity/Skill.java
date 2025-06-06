@@ -20,7 +20,7 @@ public class Skill {
     @SequenceGenerator(name = "skill_sequence", sequenceName = "skill_sequence", allocationSize = 1)
     @GeneratedValue(strategy = SEQUENCE, generator = "skill_sequence")
     @Column(name = "id", nullable = false, updatable = false)
-    private int id;
+    private long id;
 
     @NotBlank(message = "Skill name is required")
     @Column(name = "name", nullable = false, unique = true)

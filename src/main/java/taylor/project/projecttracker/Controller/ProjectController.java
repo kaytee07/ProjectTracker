@@ -1,6 +1,7 @@
 package taylor.project.projecttracker.Controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import taylor.project.projecttracker.Mappers.ProjectMapper;
@@ -19,6 +20,7 @@ public class ProjectController {
     private final ProjectService projectService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ProjectResponse> createProject(@RequestBody CreateProjectRequest request, @RequestParam String actorName) {
         return ResponseEntity.ok(projectService.createProject(request, actorName));
     }
@@ -33,7 +35,14 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.updateProject(id, request, actorName));
     }
 
+    @GetMapping("/without-tasks")
+    public ResponseEntity<List<ProjectResponse>> getProjectsWithoutTasks() {
+        return ResponseEntity.ok(projectService.getProjectsWithoutTasks());
+    }
+
+
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<String> deleteProject(@PathVariable Long id, @RequestParam String actorName) {
         projectService.deleteProject(id, actorName);
         return ResponseEntity.ok("Project deleted successfully");

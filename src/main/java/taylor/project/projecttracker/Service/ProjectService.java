@@ -1,18 +1,22 @@
 package taylor.project.projecttracker.Service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import taylor.project.projecttracker.Entity.AuditLog;
 import taylor.project.projecttracker.Entity.Project;
-import taylor.project.projecttracker.Entity.Status;
-import taylor.project.projecttracker.Entity.Task;
+import taylor.project.projecttracker.Exception.ProjectNotFoundExpetion;
 import taylor.project.projecttracker.Mappers.ProjectMapper;
 import taylor.project.projecttracker.Record.ProjectRecords.CreateProjectRequest;
 import taylor.project.projecttracker.Record.ProjectRecords.ProjectResponse;
 import taylor.project.projecttracker.Record.ProjectRecords.UpdateProjectRequest;
 import taylor.project.projecttracker.Repository.AuditLogRepository;
 import taylor.project.projecttracker.Repository.ProjectRepository;
+import taylor.project.projecttracker.Repository.TaskRepository;
+import org.springframework.cache.annotation.Cacheable;
+
 
 import java.time.Instant;
 import java.util.List;
@@ -21,9 +25,13 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class ProjectService {
+
     private final ProjectRepository projectRepository;
     private final AuditLogRepository auditLogRepository;
+    private final TaskRepository taskRepository;
 
+    @Transactional
+    @CacheEvict(value = {"projects", "allProjects", "projectsWithoutTasks"}, allEntries = true)
     public ProjectResponse createProject(CreateProjectRequest request, String actorName) {
         Project project = new Project();
         project.setName(request.name());
@@ -35,16 +43,22 @@ public class ProjectService {
         return ProjectMapper.toResponse(saved);
     }
 
+    @Cacheable(value = "projects", key = "#projectId")
     public Project findProjectById(Long projectId) {
-        return projectRepository.findById(projectId).orElseThrow(EntityNotFoundException::new);
+        return projectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException("Project with ID " + projectId + " not found"));
     }
 
+    @Cacheable(value = "allProjects", key = "'all'")
     public List<ProjectResponse> findAllProjects() {
         return ProjectMapper.toResponseList(projectRepository.findAll());
     }
 
+    @Transactional
+    @CacheEvict(value = {"projects", "allProjects", "projectsWithoutTasks"}, allEntries = true)
     public ProjectResponse updateProject(Long id, UpdateProjectRequest updatedProject, String actorName) {
-        Project existingProject = projectRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Project not found"));
+        Project existingProject = projectRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Project not found"));
         existingProject.setName(updatedProject.name());
         existingProject.setDescription(updatedProject.description());
         existingProject.setDeadline(updatedProject.deadline());
@@ -54,11 +68,22 @@ public class ProjectService {
         return ProjectMapper.toResponse(saved);
     }
 
+    @Cacheable(value = "projectsWithoutTasks", key = "'noTasks'")
+    public List<ProjectResponse> getProjectsWithoutTasks() {
+        return projectRepository.findProjectsWithoutTasks()
+                .stream()
+                .map(ProjectMapper::toResponse)
+                .toList();
+    }
+
+    @Transactional
+    @CacheEvict(value = {"projects", "allProjects", "projectsWithoutTasks"}, allEntries = true)
     public void deleteProject(Long id, String actorName) {
-        projectRepository.findById(id).ifPresent(project -> {
-            projectRepository.delete(project);
-            logAction("DELETE", "Project", id.toString(), actorName, project);
-        });
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new ProjectNotFoundExpetion("Project with ID " + id + " not found"));
+        taskRepository.deleteByProjectId(id);
+        projectRepository.delete(project);
+        logAction("DELETE", "Project", id.toString(), actorName, project);
     }
 
     private void logAction(String actionType, String entityType, String entityId, String actorName, Object payload) {
@@ -71,5 +96,5 @@ public class ProjectService {
         log.setPayload(Map.of("data", payload));  // You might want to customize serialization
         auditLogRepository.save(log);
     }
-
 }
+

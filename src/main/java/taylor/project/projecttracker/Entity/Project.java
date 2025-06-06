@@ -1,5 +1,7 @@
 package taylor.project.projecttracker.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
@@ -44,6 +46,7 @@ public class Project {
     private Status status;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Task> tasks = new ArrayList<>();
 
     public Project() {}
@@ -54,5 +57,11 @@ public class Project {
 
     public void remove(Task task) {
         tasks.remove(task);
+    }
+
+    @Override
+    public String toString() {
+        return "Project{id=" + id + ", name=" + name + ", description=" + description +
+                ", deadline=" + deadline + ", status=" + status + "}";
     }
 }
