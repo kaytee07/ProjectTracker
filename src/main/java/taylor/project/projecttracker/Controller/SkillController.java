@@ -41,10 +41,10 @@ public class SkillController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSkill(@PathVariable Long id,
+    public ResponseEntity<String> deleteSkill(@PathVariable Long id,
                                             @RequestParam String actorName) {
         skillService.deleteSkill(id, actorName);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Skill deleted successfully");
     }
 
     @GetMapping("{id}")
@@ -77,6 +77,8 @@ public class SkillController {
         Skill skill = skillService.removeSkillFromDeveloper(skillId, developerId, actorName);
         return ResponseEntity.ok(toSkillResponse(skill));
     }
+
+
 
     private SkillResponse toSkillResponse(Skill skill) {
         Set<Long> developerIds = skill.getDevelopers()

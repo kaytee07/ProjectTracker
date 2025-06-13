@@ -8,7 +8,7 @@ import lombok.Data;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Data
-@Entity
+@Entity(name = "app_user")
 public class User {
     @Id
     @SequenceGenerator(
