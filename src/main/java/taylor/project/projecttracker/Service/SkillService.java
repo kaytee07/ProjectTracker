@@ -1,17 +1,16 @@
 package taylor.project.projecttracker.Service;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import taylor.project.projecttracker.Entity.AuditLog;
-import taylor.project.projecttracker.Entity.Developer;
+import taylor.project.projecttracker.Entity.User;
 import taylor.project.projecttracker.Entity.Skill;
+
 import taylor.project.projecttracker.Exception.SkillNotFoundException;
 import taylor.project.projecttracker.Mappers.SkillMapper;
-import taylor.project.projecttracker.Record.SkillRecords.SkillResponse;
 import taylor.project.projecttracker.Repository.AuditLogRepository;
-import taylor.project.projecttracker.Repository.DeveloperRepository;
 import taylor.project.projecttracker.Repository.SkillRepository;
+import taylor.project.projecttracker.Repository.UserRepository;
 
 import java.time.Instant;
 import java.util.List;
@@ -22,7 +21,7 @@ import java.util.Map;
 public class SkillService {
 
     private final SkillRepository skillRepository;
-    private final DeveloperRepository developerRepository;
+    private final UserRepository userRepository;
     private final AuditLogRepository auditLogRepository;
 
     public Skill createSkill(Skill skill, String actorName) {
@@ -61,10 +60,10 @@ public class SkillService {
     public Skill addSkillToDeveloper(long skillId, Long developerId, String actorName) {
         Skill skill = skillRepository.findById(skillId)
                 .orElseThrow(() -> new SkillNotFoundException("Skill not found"));
-        Developer developer = developerRepository.findById(developerId)
+        User user = userRepository.findById(developerId)
                 .orElseThrow(() -> new SkillNotFoundException("Developer not found"));
 
-        skill.addDeveloper(developer);
+        skill.addUser(user);
         Skill saved = skillRepository.save(skill);
         logAction("UPDATE", "Skill", String.valueOf(saved.getId()), actorName, SkillMapper.toResponse(saved));
         return saved;
@@ -73,10 +72,10 @@ public class SkillService {
     public Skill removeSkillFromDeveloper(long skillId, Long developerId, String actorName) {
         Skill skill = skillRepository.findById(skillId)
                 .orElseThrow(() -> new SkillNotFoundException("Skill not found"));
-        Developer developer = developerRepository.findById(developerId)
+        User user = userRepository.findById(developerId)
                 .orElseThrow(() -> new SkillNotFoundException("Developer not found"));
 
-        skill.removeDeveloper(developer);
+        skill.removeUser(user);
         Skill saved = skillRepository.save(skill);
         logAction("UPDATE", "Skill", String.valueOf(saved.getId()), actorName, SkillMapper.toResponse(saved));
         return saved;

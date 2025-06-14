@@ -15,7 +15,6 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<Task, Long> {
     Task findById(long id);
     List<Task> findByProjectId(Long projectId);
-    List<Task> findByDeveloperId(Long developerId);
     @Modifying
     @Transactional
     @Query("DELETE FROM Task t WHERE t.project.id = :projectId")

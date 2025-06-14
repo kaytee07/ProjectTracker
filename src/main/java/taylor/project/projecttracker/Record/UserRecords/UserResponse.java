@@ -4,8 +4,7 @@ import taylor.project.projecttracker.Entity.Role;
 
 public record UserResponse (
         Long id,
-        String firstName,
-        String lastName,
+        String name,
         String email,
         Role role
 ){}

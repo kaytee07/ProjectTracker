@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import taylor.project.projecttracker.Entity.AuditLog;
 import taylor.project.projecttracker.Repository.AuditLogRepository;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -24,5 +26,14 @@ public class AuditLogService {
         } else {
             return auditLogRepository.findAll();
         }
+    }
+
+    public void recordEvent(String email, String action) {
+        AuditLog log = new AuditLog();
+        log.setActorName(email);
+        log.setActionType(action);
+        log.setTimestamp(Instant.now());
+
+        auditLogRepository.save(log);
     }
 }

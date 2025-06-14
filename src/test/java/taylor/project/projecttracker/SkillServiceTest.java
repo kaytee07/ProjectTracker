@@ -6,12 +6,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import taylor.project.projecttracker.Entity.Developer;
 import taylor.project.projecttracker.Entity.Skill;
+import taylor.project.projecttracker.Entity.User;
 import taylor.project.projecttracker.Exception.SkillNotFoundException;
 import taylor.project.projecttracker.Repository.AuditLogRepository;
-import taylor.project.projecttracker.Repository.DeveloperRepository;
 import taylor.project.projecttracker.Repository.SkillRepository;
+import taylor.project.projecttracker.Repository.UserRepository;
 import taylor.project.projecttracker.Service.SkillService;
 
 import java.util.*;
@@ -25,7 +25,7 @@ class SkillServiceTest {
     @Mock
     private SkillRepository skillRepository;
     @Mock
-    private DeveloperRepository developerRepository;
+    private UserRepository userRepository;
     @Mock
     private AuditLogRepository auditLogRepository;
 
@@ -33,7 +33,7 @@ class SkillServiceTest {
     private SkillService skillService;
 
     private Skill skill;
-    private Developer developer;
+    private User user;
 
     @BeforeEach
     void setUp() {
@@ -41,9 +41,9 @@ class SkillServiceTest {
         skill.setId(1L);
         skill.setName("Java");
 
-        developer = new Developer();
-        developer.setId(1L);
-        developer.setName("Alice");
+        user = new User();
+        user.setId(1L);
+        user.setUsername("Alice");
     }
 
     @Test
@@ -116,7 +116,7 @@ class SkillServiceTest {
     @Test
     void addSkillToDeveloper_shouldAddAndLog() {
         when(skillRepository.findById(1L)).thenReturn(Optional.of(skill));
-        when(developerRepository.findById(1L)).thenReturn(Optional.of(developer));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(skillRepository.save(any())).thenReturn(skill);
 
         Skill result = skillService.addSkillToDeveloper(1L, 1L, "admin");
@@ -128,10 +128,10 @@ class SkillServiceTest {
 
     @Test
     void removeSkillFromDeveloper_shouldRemoveAndLog() {
-        skill.addDeveloper(developer);
+        skill.addUser(user);
 
         when(skillRepository.findById(1L)).thenReturn(Optional.of(skill));
-        when(developerRepository.findById(1L)).thenReturn(Optional.of(developer));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(skillRepository.save(any())).thenReturn(skill);
 
         Skill result = skillService.removeSkillFromDeveloper(1L, 1L, "admin");

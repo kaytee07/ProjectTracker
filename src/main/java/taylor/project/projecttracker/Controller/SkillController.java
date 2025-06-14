@@ -5,11 +5,9 @@ import org.hibernate.query.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import taylor.project.projecttracker.Entity.Developer;
 import taylor.project.projecttracker.Entity.Skill;
+import taylor.project.projecttracker.Entity.User;
 import taylor.project.projecttracker.Mappers.SkillMapper;
-import taylor.project.projecttracker.Mappers.TaskMapper;
-import taylor.project.projecttracker.Record.DeveloperRecords.DeveloperResponse;
 import taylor.project.projecttracker.Record.SkillRecords.SkillResponse;
 import taylor.project.projecttracker.Service.SkillService;
 
@@ -81,9 +79,9 @@ public class SkillController {
 
 
     private SkillResponse toSkillResponse(Skill skill) {
-        Set<Long> developerIds = skill.getDevelopers()
+        Set<Long> developerIds = skill.getUsers()
                 .stream()
-                .map(Developer::getId)
+                .map(User::getId)
                 .collect(Collectors.toSet());
         return new SkillResponse(skill.getId(), skill.getName(), developerIds);
     }

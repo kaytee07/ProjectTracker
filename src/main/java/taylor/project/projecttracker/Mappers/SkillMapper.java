@@ -1,7 +1,8 @@
 package taylor.project.projecttracker.Mappers;
 
-import taylor.project.projecttracker.Entity.Developer;
+
 import taylor.project.projecttracker.Entity.Skill;
+import taylor.project.projecttracker.Entity.User;
 import taylor.project.projecttracker.Record.SkillRecords.CreateSkillRequest;
 import taylor.project.projecttracker.Record.SkillRecords.SkillResponse;
 
@@ -19,8 +20,8 @@ public class SkillMapper {
         return new SkillResponse(
                 skill.getId(),
                 skill.getName(),
-                skill.getDevelopers().stream()
-                        .map(Developer::getId)
+                skill.getUsers().stream()
+                        .map(User::getId)
                         .collect(Collectors.toSet())
         );
     }

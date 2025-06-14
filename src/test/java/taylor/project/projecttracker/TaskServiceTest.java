@@ -3,27 +3,22 @@ package taylor.project.projecttracker;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.data.domain.Sort;
-import taylor.project.projecttracker.Entity.Developer;
 import taylor.project.projecttracker.Entity.Project;
 import taylor.project.projecttracker.Entity.Status;
 import taylor.project.projecttracker.Entity.Task;
-import taylor.project.projecttracker.Exception.TaskNotFoundException;
+import taylor.project.projecttracker.Entity.User;
 import taylor.project.projecttracker.Record.TaskRecords.TaskResponse;
-import taylor.project.projecttracker.Record.TaskRecords.UpdateTaskRequest;
 import taylor.project.projecttracker.Repository.AuditLogRepository;
-import taylor.project.projecttracker.Repository.DeveloperRepository;
 import taylor.project.projecttracker.Repository.ProjectRepository;
 import taylor.project.projecttracker.Repository.TaskRepository;
+import taylor.project.projecttracker.Repository.UserRepository;
 import taylor.project.projecttracker.Service.TaskService;
 
 public class TaskServiceTest {
@@ -32,7 +27,7 @@ public class TaskServiceTest {
     private TaskRepository taskRepository;
 
     @Mock
-    private DeveloperRepository developerRepository;
+    private UserRepository userRepository;
 
     @Mock
     private ProjectRepository projectRepository;
@@ -44,7 +39,7 @@ public class TaskServiceTest {
     private TaskService taskService;
 
     private Task existingTask;
-    private Developer developer;
+    private User user;
     private Project project;
 
     @BeforeEach
@@ -55,9 +50,9 @@ public class TaskServiceTest {
         project.setId(1L);
         project.setName("Project X");
 
-        developer = new Developer();
-        developer.setId(1L);
-        developer.setName("Alice");
+        user = new User();
+        user.setId(1L);
+        user.setUsername("Alice");
 
         existingTask = new Task();
         existingTask.setId(1L);

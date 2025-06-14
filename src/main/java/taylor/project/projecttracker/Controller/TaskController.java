@@ -2,6 +2,7 @@ package taylor.project.projecttracker.Controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import taylor.project.projecttracker.Entity.Project;
 import taylor.project.projecttracker.Mappers.TaskMapper;
@@ -22,6 +23,7 @@ public class TaskController {
     private final TaskService taskService;
     private final ProjectService projectService;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @PostMapping
     public ResponseEntity<TaskResponse> createTask(@RequestBody CreateTaskRequest request, @RequestParam String actorName) {
         System.out.println(request.projectId());
@@ -33,13 +35,14 @@ public class TaskController {
     public ResponseEntity<TaskResponse> getTaskById(@RequestParam Long id) {
         return ResponseEntity.ok(TaskMapper.toResponse(taskService.findTaskById(id)));
     }
-
+    @PreAuthorize("hasRole('DEVELOPER') and @securityUtil.isOwner(#id, authentication.name)")
     @PutMapping("/{id}")
     public ResponseEntity<TaskResponse> updateTask(@PathVariable Long id, @RequestBody UpdateTaskRequest request, @RequestParam String actorName) {
         return ResponseEntity.ok(TaskMapper.toResponse(taskService.updateTask(id, request, actorName)));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('DEVELOPER') and @securityUtil.isOwner(#id, authentication.name)")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id, @RequestParam String actorName) {
         taskService.deleteTask(id, actorName);
         return ResponseEntity.noContent().build();
@@ -48,11 +51,6 @@ public class TaskController {
     @GetMapping("/byproject/{id}")
     public ResponseEntity<List<TaskResponse>> getTasksByProject(@PathVariable Long projectId) {
         return ResponseEntity.ok(taskService.getTasksByProject(projectId));
-    }
-
-    @GetMapping("/bydeveloper/{developerId}")
-    public ResponseEntity<List<TaskResponse>> getTasksByDeveloper(@PathVariable Long developerId) {
-        return ResponseEntity.ok(taskService.getTasksByDeveloper(developerId));
     }
 
     @PostMapping("/{taskId}/assign/{developerId}")

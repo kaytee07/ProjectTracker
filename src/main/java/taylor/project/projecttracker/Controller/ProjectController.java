@@ -1,12 +1,19 @@
 package taylor.project.projecttracker.Controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import taylor.project.projecttracker.Entity.Project;
 import taylor.project.projecttracker.Mappers.ProjectMapper;
 import taylor.project.projecttracker.Record.ProjectRecords.CreateProjectRequest;
 import taylor.project.projecttracker.Record.ProjectRecords.ProjectResponse;
+import taylor.project.projecttracker.Record.ProjectRecords.ProjectSummary;
 import taylor.project.projecttracker.Record.ProjectRecords.UpdateProjectRequest;
 import taylor.project.projecttracker.Service.ProjectService;
 
@@ -15,13 +22,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/projects")
 @RequiredArgsConstructor
+@Slf4j
 public class ProjectController {
 
     private final ProjectService projectService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<ProjectResponse> createProject(@RequestBody CreateProjectRequest request, @RequestParam String actorName) {
+        log.info("POST /api/projects controller reached with actorName: {}, project: {}", actorName, request);
         return ResponseEntity.ok(projectService.createProject(request, actorName));
     }
 
@@ -31,6 +41,7 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<ProjectResponse> updateProject(@PathVariable Long id, @RequestBody UpdateProjectRequest request, @RequestParam String actorName) {
         return ResponseEntity.ok(projectService.updateProject(id, request, actorName));
     }
@@ -51,6 +62,15 @@ public class ProjectController {
     @GetMapping
     public ResponseEntity<List<ProjectResponse>> getAllProjects() {
         return ResponseEntity.ok(projectService.findAllProjects());
+    }
+
+    @PreAuthorize("hasRole('CONTRACTOR')")
+    @GetMapping("{id}/summary")
+    public ProjectSummary getProjectSummaries(@PathVariable Long id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("Username: " + auth.getName());
+        System.out.println("Authorities: " + auth.getAuthorities());
+        return projectService.findProjectSummaryByProjectId(id);
     }
 }
 

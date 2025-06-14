@@ -32,7 +32,7 @@ public class Skill {
     @ManyToMany(mappedBy = "skills")
     @ToString.Exclude
     @JsonIgnore
-    private Set<Developer> developers = new HashSet<>();
+    private Set<User> users = new HashSet<>();
 
     public Skill(String name) {
         this.name = name;
@@ -40,15 +40,15 @@ public class Skill {
 
 
 
-    public void addDeveloper(Developer developer) {
-        this.developers.add(developer);
-        developer.getSkills().add(this);
+    public void addUser(User user) {
+        this.users.add(user);
+        user.getSkills().add(this);
     }
 
 
-    public void removeDeveloper(Developer developer) {
-        this.developers.remove(developer);
-        developer.getSkills().remove(this);
+    public void removeUser(User user) {
+        this.users.remove(user);
+        user.getSkills().remove(this);
     }
 
     @Override

@@ -11,6 +11,7 @@ import taylor.project.projecttracker.Exception.ProjectNotFoundExpetion;
 import taylor.project.projecttracker.Mappers.ProjectMapper;
 import taylor.project.projecttracker.Record.ProjectRecords.CreateProjectRequest;
 import taylor.project.projecttracker.Record.ProjectRecords.ProjectResponse;
+import taylor.project.projecttracker.Record.ProjectRecords.ProjectSummary;
 import taylor.project.projecttracker.Record.ProjectRecords.UpdateProjectRequest;
 import taylor.project.projecttracker.Repository.AuditLogRepository;
 import taylor.project.projecttracker.Repository.ProjectRepository;
@@ -21,6 +22,7 @@ import org.springframework.cache.annotation.Cacheable;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -84,6 +86,17 @@ public class ProjectService {
         taskRepository.deleteByProjectId(id);
         projectRepository.delete(project);
         logAction("DELETE", "Project", id.toString(), actorName, ProjectMapper.toResponse(project));
+    }
+
+    public ProjectSummary findProjectSummaryByProjectId(Long projectId) {
+        List<Project> projects = projectRepository.findAll();
+        Optional<Project> project = projectRepository.findById(projectId);
+        Project project1 = project.orElseThrow(() -> new ProjectNotFoundExpetion("Project not found"));
+        return new ProjectSummary(
+                project1.getId(),
+                project1.getName(),
+                project1.getDeadline()
+        );
     }
 
     private void logAction(String actionType, String entityType, String entityId, String actorName, Object payload) {

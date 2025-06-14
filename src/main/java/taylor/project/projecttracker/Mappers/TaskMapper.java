@@ -2,8 +2,6 @@ package taylor.project.projecttracker.Mappers;
 
 import taylor.project.projecttracker.Entity.Project;
 import taylor.project.projecttracker.Entity.Task;
-import taylor.project.projecttracker.Entity.Developer;
-import taylor.project.projecttracker.Record.ProjectRecords.ProjectResponse;
 import taylor.project.projecttracker.Record.TaskRecords.CreateTaskRequest;
 import taylor.project.projecttracker.Record.TaskRecords.TaskResponse;
 
@@ -31,7 +29,7 @@ public class TaskMapper {
                 task.getDueDate(),
                 task.getStatus(),
                 task.getProject() != null ? task.getProject().getId() : null,
-                task.getDeveloper() != null ? task.getDeveloper().getId() : null
+                task.getUser() != null ? task.getUser().getId() : null
 
 
         );

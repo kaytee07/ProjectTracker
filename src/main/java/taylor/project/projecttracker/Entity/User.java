@@ -1,14 +1,21 @@
 package taylor.project.projecttracker.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.springframework.stereotype.Component;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Data
-@Entity(name = "app_user")
+@Entity
+@Table(name = "\"user\"")
 public class User {
     @Id
     @SequenceGenerator(
@@ -19,25 +26,36 @@ public class User {
     @GeneratedValue(strategy = SEQUENCE, generator = "user_sequence")
     private Long id;
 
-    @NotNull
-    @NotBlank(message = "first name is required")
-    @Column(name = "first_name", nullable = false, length = 50, columnDefinition = "TEXT")
-    private String firstName;
 
     @NotNull
-    @NotBlank(message = "last name is required")
-    @Column(name = "last_name", nullable = false, length = 50, columnDefinition = "TEXT")
-    private String lastName;
+    @NotBlank(message = "username is required")
+    @Column(nullable = true, length = 50, columnDefinition = "TEXT")
+    private String username;
 
-    @NotNull
-    @NotBlank(message = "email is required")
-    @Column(name = "email", nullable = false, length = 50, columnDefinition = "TEXT")
+
+    @Column(nullable = true, length = 50, columnDefinition = "TEXT")
+    private String provider;;
+
+
+    @Column(nullable = true, length = 50, columnDefinition = "TEXT")
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_skill",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id")
+    )
+    private Set<Skill> skills = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<Task> tasks;
 
 }

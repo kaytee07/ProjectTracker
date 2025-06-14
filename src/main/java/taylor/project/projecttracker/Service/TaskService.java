@@ -7,18 +7,15 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import taylor.project.projecttracker.Entity.AuditLog;
-import taylor.project.projecttracker.Entity.Developer;
 import taylor.project.projecttracker.Entity.Project;
 import taylor.project.projecttracker.Entity.Task;
+import taylor.project.projecttracker.Entity.User;
 import taylor.project.projecttracker.Exception.TaskNotFoundException;
 import taylor.project.projecttracker.Mappers.TaskMapper;
 import taylor.project.projecttracker.Record.TaskRecords.CreateTaskRequest;
 import taylor.project.projecttracker.Record.TaskRecords.TaskResponse;
 import taylor.project.projecttracker.Record.TaskRecords.UpdateTaskRequest;
-import taylor.project.projecttracker.Repository.AuditLogRepository;
-import taylor.project.projecttracker.Repository.DeveloperRepository;
-import taylor.project.projecttracker.Repository.ProjectRepository;
-import taylor.project.projecttracker.Repository.TaskRepository;
+import taylor.project.projecttracker.Repository.*;
 import taylor.project.projecttracker.UtilityInterfaces.TaskStatusCount;
 
 import java.time.Instant;
@@ -30,9 +27,9 @@ import java.util.Map;
 public class TaskService {
 
     private final TaskRepository taskRepository;
-    private final DeveloperRepository developerRepository;
     private final ProjectRepository projectRepository;
     private final AuditLogRepository auditLogRepository;
+    private final UserRepository userRepository;
 
     public Task createTask(CreateTaskRequest task, String actorName, Project project) {
         Task saved = taskRepository.save(TaskMapper.toEntity(task, project));
@@ -74,16 +71,13 @@ public class TaskService {
         return TaskMapper.toResponseList(taskRepository.findByProjectId(projectId));
     }
 
-    public List<TaskResponse> getTasksByDeveloper(Long developerId) {
-        return TaskMapper.toResponseList(taskRepository.findByDeveloperId(developerId));
-    }
 
     public TaskResponse assignTaskToDeveloper(Long taskId, Long developerId, String actorName) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new TaskNotFoundException("Task not found"));
-        Developer developer = developerRepository.findById(developerId)
+        User user = userRepository.findById(developerId)
                 .orElseThrow(() -> new TaskNotFoundException("Developer not found"));
-        task.setDeveloper(developer);
+        task.setUser(user);
         Task saved = taskRepository.save(task);
         logAction("UPDATE", "Task", String.valueOf(saved.getId()), actorName, TaskMapper.toResponse(saved));
         return TaskMapper.toResponse(saved);

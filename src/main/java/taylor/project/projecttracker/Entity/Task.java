@@ -53,10 +53,10 @@ public class Task {
     private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "developer_id", nullable = true)
+    @JoinColumn(name = "user_id", nullable = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Developer developer;
+    private User user;
 
     public Task() {}
 
