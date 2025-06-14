@@ -1,0 +1,31 @@
+sequenceDiagram
+    participant User
+    participant SpringSecurity
+    participant Google
+    participant JWTSecret
+    participant AuthZCheck
+    participant Resource
+
+%% Username/Pass Flow
+    User->>SpringSecurity: Username/Pass (/login)
+    SpringSecurity->>SpringSecurity: Validate credentials
+    SpringSecurity->>JWTSecret: Issue JWT
+    SpringSecurity-->>User: JWT Token
+
+%% OAuth2 Flow
+    User->>SpringSecurity: OAuth2 (/oauth2/authorization/google)
+    SpringSecurity->>Google: Redirect to Google for Authentication
+    Google-->>SpringSecurity: Callback with Auth Code
+    SpringSecurity->>Google: Exchange Code for User Info
+    Google-->>SpringSecurity: User Profile
+    SpringSecurity->>JWTSecret: Issue JWT Token
+    SpringSecurity-->>User: JWT Token
+
+%% Subsequently (For both flows):
+    User->>SpringSecurity: Access API with JWT
+    SpringSecurity->>JWTSecret: Validate Token
+    JWTSecret-->>SpringSecurity: Token Valid
+    SpringSecurity->>AuthZCheck: Check Method or Role Access
+    AuthZCheck-->>SpringSecurity: Access Granted
+    SpringSecurity->>Resource: Forward Authenticated Request
+    Resource-->>User: Successful Response

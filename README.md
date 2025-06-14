@@ -170,4 +170,98 @@ POST /api/projects
 ```bash
 mvn spring-boot:run  # For local development
 ```
+
+# 🔐 Spring Security — Username/Pass + JWT + Google OAuth 2.0
+
+## 🟣 Introduction
+
+This application demonstrates **Spring Security** with:
+
+✅ **Username/Pass + JWT authentication**
+✅ **Google OAuth 2.0 login**
+✅ **Custom Security Filter and Success Handler**
+✅ **Postgres and Mongo (optional) for persistence and logging**
+
+---
+
+## 🟣 Architectural Flow
+
+### 1️⃣ Username/Pass:
+
+- User performs **POST /login** with credentials.
+- `UsernameAndPassAuthFilter` validates credentials against `UserDetailsService`.
+- If authentication is successful, a **JWT** is generated and returned in the `Authorization` header.
+
+---
+
+### 2️⃣ Subsequent API Access:
+
+- The **JwtAuthFilter** parses `Authorization:Bearer <TOKEN>` from requests.
+- It validates the JWT and populates `SecurityContext`.
+- Access is then allowed to secured endpoints.
+
+---
+
+### 3️⃣ Google OAuth 2.0:
+
+- User initiates **GET /oauth2/authorization/google**
+- User is redirected to Google to approve.
+- After approval, Google calls back to **/login/oauth2/code/{registrationId}**
+- Spring parses this, converts it to a `OAuth2User`.
+- The **CustomOAuth2SuccessHandler** emits a JWT for this user.
+- User is then redirected back to frontend with `?token=<generated_jwt>`.
+
+---
+
+## 🔹 Summary of Filters
+
+| Filter | Action |
+|---------|---------|
+| `UsernameAndPassAuthFilter` | Authenticates credentials and emits JWT |
+| `JwtAuthFilter` | Validates JWT for subsequent requests |
+| `CustomOAuth2SuccessHandler` | Initializes or finds a User from Google, then emits a JWT |  
+
+---
+
+## 🔹 Security Flow Diagram (Simplified)
+
+---
+
+## 🔹 Tech Stack
+
+- **Spring Security 6**
+- **Spring Boot 3**
+- **Username/Pass + JWT with custom filters**
+- **OAuth 2.0 Client (Login with Google)**
+- **Custom Success Handler to generate JWT upon Google authentication**
+- **Postgres (Primary datastore)**
+- **MongoDB (Audit Logs)**
+
+---
+
+## 🔹 Summary
+
+✅ Username/Pass + JWT flow:
+POST credentials → validate → generate JWT → subsequent requests with `Authorization:Bearer <TOKEN>`
+
+✅ Google OAuth 2.0 flow:
+Login with Google → Google parses credentials → Spring converts to `OAuth2User` → emits JWT → User redirected back with `?token=<generated_jwt>`
+
+---
+
+🚀Tip:
+Make sure to **keep your JWT secret key safely configured** and **set proper expiration and validation criteria** to avoid unauthorized access.
+
+---
+
+## 🔹 Additional Notes
+
+➥ The custom `UsernameAndPassAuthFilter` is configured to handle credentials submission at **POST /login**.
+
+➥ The `CustomOAuth2SuccessHandler` converts Google authentication into a JWT and performs a **redirect with the JWT attached in the URL**.
+
+➥ The `JwtAuthFilter` parses this JWT for subsequent requests and populates the `SecurityContext`.
+
+---
+
 **Note**: Requires Java 17+ and Maven/Gradle.
