@@ -67,9 +67,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .requiresChannel(channel -> channel
-                        .anyRequest().requiresSecure()
-                )
+//                .requiresChannel(channel -> channel
+//                        .anyRequest().requiresSecure()
+//                )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .addFilterAt(new AuthenticationFilter(authenticationManager(), signingKey, auditLogService),
@@ -78,6 +78,7 @@ public class SecurityConfig {
                         BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/login", "/api/auth/register").permitAll()
+                        .requestMatchers("/api/auth/refresh-token").hasRole("ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/swagger-ui/**", "/v3/**", "/h2-console/**").hasRole("ADMIN")
                         .requestMatchers("api/projects", "/api/projects/{id}").hasAnyRole("ADMIN", "MANAGER")
