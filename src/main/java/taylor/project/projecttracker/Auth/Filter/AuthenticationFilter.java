@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.beans.factory.annotation.Value;
 import taylor.project.projecttracker.Service.AuditLogService;
+import taylor.project.projecttracker.UtilityClass.JwtTokenUtil;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
@@ -31,16 +32,18 @@ import java.util.stream.Collectors;
 public class AuthenticationFilter extends OncePerRequestFilter {
     private final ProviderManager authenticationManager;
     private final AuditLogService auditLogService;
+    private final JwtTokenUtil jwtTokenUtil;
 
     @Value("${app.jwt.secret}")
     private String signingKey;
 
 
 
-    public AuthenticationFilter(ProviderManager authenticationManager, @Value("${app.jwt.secret}") String signingKey, AuditLogService auditLogService) {
+    public AuthenticationFilter(ProviderManager authenticationManager, @Value("${app.jwt.secret}") String signingKey, AuditLogService auditLogService, JwtTokenUtil jwtTokenUtil) {
         this.authenticationManager = authenticationManager;
         this.signingKey = signingKey;
         this.auditLogService = auditLogService;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
 
@@ -76,6 +79,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 auditLogService.recordEvent(username, "UNSUCCESSFUL LOGIN");
                 throw new BadCredentialsException("Invalid credentials.");
             }
+
             SecurityContextHolder.getContext().setAuthentication(authenticatedResult);
             SecretKey key = Keys.hmacShaKeyFor(
                     signingKey.getBytes(

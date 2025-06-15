@@ -22,6 +22,9 @@ public class JwtTokenUtil {
     @Value("${app.jwt.expiration}")
     private Long expiration;
 
+    @Value("${app.jwt.refresh-expiration}")
+    private long refreshTokenExpiration;
+
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
@@ -32,6 +35,19 @@ public class JwtTokenUtil {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()));
 
+        return  buildToken(userDetails, expiration, claims);
+    }
+
+
+    public String refreshToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()));
+        return  buildToken(userDetails, refreshTokenExpiration, claims);
+    }
+
+    private String buildToken(UserDetails userDetails, long expiration, Map<String, Object> claims) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
@@ -49,7 +65,7 @@ public class JwtTokenUtil {
                     .parseClaimsJws(token)
                     .getBody();
 
-            String username = claims.getSubject();
+            String username = claims.get("username", String.class);
 
             boolean isUsernameValid = username.equals(userDetails.getUsername());
             boolean isNotExpired = !claims.getExpiration().before(new Date());

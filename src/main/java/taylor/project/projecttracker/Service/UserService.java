@@ -4,19 +4,23 @@ import jakarta.transaction.Transactional;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import taylor.project.projecttracker.Details.SecurityUser;
 import taylor.project.projecttracker.Entity.*;
 import taylor.project.projecttracker.Exception.UserNotFoundException;
 import taylor.project.projecttracker.Mappers.UserMapper;
+import taylor.project.projecttracker.Record.TokenRecords.TokenRecord;
 import taylor.project.projecttracker.Record.UserRecords.UserResponse;
 import taylor.project.projecttracker.Repository.AuditLogRepository;
 import taylor.project.projecttracker.Repository.OTPRepository;
 import taylor.project.projecttracker.Repository.SkillRepository;
 import taylor.project.projecttracker.Repository.UserRepository;
+import taylor.project.projecttracker.UtilityClass.JwtTokenUtil;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -30,14 +34,20 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final SkillRepository skillRepository;
     private final AuditLogRepository auditLogRepository;
+    private final JwtTokenUtil jwtTokenUtil;
 
 
 
-    public UserService(UserRepository userRepository, SkillRepository skillRepository, AuditLogRepository auditLogRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository,
+                       SkillRepository skillRepository,
+                       AuditLogRepository auditLogRepository,
+                       PasswordEncoder passwordEncoder,
+                       JwtTokenUtil jwtTokenUtil) {
         this.userRepository = userRepository;
         this.skillRepository = skillRepository;
         this.auditLogRepository = auditLogRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtTokenUtil = jwtTokenUtil;
 
     }
 
@@ -93,7 +103,6 @@ public class UserService {
         logAction("UPDATE", "User", String.valueOf(id), "SYSTEM", UserMapper.toResponse(updated));
         return updated;
     }
-
 
     private void logAction(String actionType, String entityType, String entityId, String actorName, Object payload) {
         AuditLog log = new AuditLog();

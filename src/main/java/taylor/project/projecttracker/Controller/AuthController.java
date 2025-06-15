@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import taylor.project.projecttracker.Details.CustomOAuth2User;
 import taylor.project.projecttracker.Entity.OTP;
 import taylor.project.projecttracker.Entity.User;
+import taylor.project.projecttracker.Record.TokenRecords.TokenRecord;
+import taylor.project.projecttracker.Record.TokenRecords.TokenRecordResponse;
+import taylor.project.projecttracker.Service.AuthService;
 import taylor.project.projecttracker.Service.UserService;
 import taylor.project.projecttracker.UtilityClass.JwtTokenUtil;
 
@@ -14,12 +17,12 @@ import taylor.project.projecttracker.UtilityClass.JwtTokenUtil;
 @RestController
 public class AuthController {
     private final UserService userService;
-    private  final JwtTokenUtil jwtTokenUtil;
+    private  final AuthService authService;
 
 
-    public AuthController(UserService userService, JwtTokenUtil jwtTokenUtil) {
+    public AuthController(UserService userService, AuthService authService) {
         this.userService = userService;
-        this.jwtTokenUtil = jwtTokenUtil;
+        this.authService = authService;
     }
 
     @PostMapping("/register")
@@ -31,10 +34,12 @@ public class AuthController {
 
     @GetMapping("/oauth2/success")
     public ResponseEntity<String> getOauth2Token(@RequestParam String token) {
-        System.out.println(token);
         return ResponseEntity.ok(token);
     }
 
-
+    @PostMapping("/refreshtoken")
+    public ResponseEntity<TokenRecordResponse> refreshToken(@RequestBody TokenRecord body) {
+        return ResponseEntity.ok(authService.refreshToken(body));
+    }
 
 }
