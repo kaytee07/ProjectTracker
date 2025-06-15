@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 public class AuthenticationFilter extends OncePerRequestFilter {
     private final ProviderManager authenticationManager;
     private final AuditLogService auditLogService;
+    private final JwtTokenUtil jwtTokenUtil;
 
 
     @Value("${app.jwt.secret}")
@@ -41,10 +42,11 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     public AuthenticationFilter(ProviderManager authenticationManager,
                                 @Value("${app.jwt.secret}") String signingKey,
-                                AuditLogService auditLogService){
+                                AuditLogService auditLogService, JwtTokenUtil jwtTokenUtil) {
         this.authenticationManager = authenticationManager;
         this.signingKey = signingKey;
         this.auditLogService = auditLogService;
+        this.jwtTokenUtil = jwtTokenUtil;
 
     }
 
@@ -75,27 +77,17 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.toList());
 
-            if (authenticatedResult.isAuthenticated()) {
-                SecurityContextHolder.getContext().setAuthentication(authenticatedResult);
-            } else {
-                auditLogService.recordEvent(username, "UNSUCCESSFUL LOGIN");
-                throw new BadCredentialsException("Invalid credentials.");
-            }
-
+            System.out.println(authorities);
             SecurityContextHolder.getContext().setAuthentication(authenticatedResult);
-            SecretKey key = Keys.hmacShaKeyFor(
-                    signingKey.getBytes(
-                            StandardCharsets.UTF_8));
-            String jwt = Jwts.builder()
-                    .setClaims(Map.of("username", username, "authorities", authorities))
-                    .signWith(key)
-                    .setExpiration(new Date(System.currentTimeMillis() + 7200000))
-                    .compact();
-
+            String jwt = jwtTokenUtil.generateToken();
+            String refreshJwt = jwtTokenUtil.refreshToken();
             String jwtString = "Bearer " + jwt;
-
             response.setHeader("Authorization", jwtString);
-            System.out.println("Successful sign-in for: " + authenticatedResult.getName());
+            String responseBody = String.format(
+                    "{\"refresh_token\": \"%s\"}",
+                     refreshJwt
+            );
+            response.getWriter().write(responseBody);
             auditLogService.recordEvent(username, "SUCCESSFUL LOGIN");
 
         }catch (AuthenticationException e) {

@@ -17,6 +17,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import taylor.project.projecttracker.UtilityClass.JwtTokenUtil;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -28,9 +29,13 @@ public class JwtFilter extends OncePerRequestFilter {
     @Value("${app.jwt.secret}")
     private String signingKey;
 
+    JwtTokenUtil jwtTokenUtil;
 
-    public JwtFilter(@Value("${app.jwt.secret}") String signingKey) {
+
+    public JwtFilter(@Value("${app.jwt.secret}") String signingKey,
+                     JwtTokenUtil jwtTokenUtil) {
         this.signingKey = signingKey;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
     @Override
@@ -47,20 +52,12 @@ public class JwtFilter extends OncePerRequestFilter {
                 String jwt = authorizationHeader.substring(7);
                 SecretKey key = Keys.hmacShaKeyFor(signingKey.getBytes(StandardCharsets.UTF_8));
 
-                Claims claims = Jwts.parserBuilder()
-                        .setSigningKey(key)
-                        .build()
-                        .parseClaimsJws(jwt)
-                        .getBody();
-
-
+                Claims claims = jwtTokenUtil.extractClaims(jwt);
                 String username = claims.get("username", String.class);
                 List<String> roles = (List<String>) claims.get("authorities");
-
                 List<SimpleGrantedAuthority> authorities = roles.stream()
                         .map(SimpleGrantedAuthority::new)
                         .toList();
-
 
                 System.out.println(authorities + " " + username);
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
@@ -68,9 +65,12 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
             } catch (Exception e) {
-                logger.warn("JWT token validation failed: " + e.getMessage());
+                logger.warn("JWT validation failed: " + e.getMessage(), e);
                 SecurityContextHolder.clearContext();
 
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Invalid or tampered token.");
+                return;
             }
         }
         filterChain.doFilter(request, response);

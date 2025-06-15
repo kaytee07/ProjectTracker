@@ -3,13 +3,16 @@ package taylor.project.projecttracker.UtilityClass;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -30,32 +33,43 @@ public class JwtTokenUtil {
     }
 
     public String generateToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("roles", userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList()));
+        List<String> authorities = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                .toList();;
+        return  buildToken(userDetails.getUsername(), expiration, authorities);
+    }
 
-        return  buildToken(userDetails, expiration, claims);
+    public String generateToken() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<String> authorities = auth.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                .toList();
+        return  buildToken(auth.getPrincipal().toString(), expiration, authorities);
+    }
+
+    public String refreshToken() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<String> authorities = auth.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                .toList();;
+        return  buildToken(auth.getPrincipal().toString(), expiration, authorities);
     }
 
 
     public String refreshToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("roles", userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList()));
-        return  buildToken(userDetails, refreshTokenExpiration, claims);
+        List<String> authorities = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());;
+
+        return  buildToken(userDetails.getUsername(), refreshTokenExpiration, authorities);
     }
 
-    private String buildToken(UserDetails userDetails, long expiration, Map<String, Object> claims) {
+    private String buildToken( String username, long expiration, List<String> authorities) {
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(userDetails.getUsername())
+                .setClaims(Map.of("username", username, "authorities", authorities))
+                .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
+
 
     public boolean validateToken(String token, UserDetails userDetails) {
         try {

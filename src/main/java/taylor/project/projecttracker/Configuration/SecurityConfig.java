@@ -72,9 +72,9 @@ public class SecurityConfig {
 //                )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
-                .addFilterAt(new AuthenticationFilter(authenticationManager(), signingKey, auditLogService),
+                .addFilterAt(new AuthenticationFilter(authenticationManager(), signingKey, auditLogService, jwtTokenUtil),
                         UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtFilter(signingKey),
+                .addFilterBefore(new JwtFilter(signingKey, jwtTokenUtil),
                         BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/login", "/api/auth/register").permitAll()
