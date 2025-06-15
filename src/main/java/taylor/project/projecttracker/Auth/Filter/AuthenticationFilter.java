@@ -32,18 +32,20 @@ import java.util.stream.Collectors;
 public class AuthenticationFilter extends OncePerRequestFilter {
     private final ProviderManager authenticationManager;
     private final AuditLogService auditLogService;
-    private final JwtTokenUtil jwtTokenUtil;
+
 
     @Value("${app.jwt.secret}")
     private String signingKey;
 
 
 
-    public AuthenticationFilter(ProviderManager authenticationManager, @Value("${app.jwt.secret}") String signingKey, AuditLogService auditLogService, JwtTokenUtil jwtTokenUtil) {
+    public AuthenticationFilter(ProviderManager authenticationManager,
+                                @Value("${app.jwt.secret}") String signingKey,
+                                AuditLogService auditLogService){
         this.authenticationManager = authenticationManager;
         this.signingKey = signingKey;
         this.auditLogService = auditLogService;
-        this.jwtTokenUtil = jwtTokenUtil;
+
     }
 
 
