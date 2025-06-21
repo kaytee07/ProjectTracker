@@ -7,18 +7,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import taylor.project.projecttracker.Entity.Project;
-import taylor.project.projecttracker.Entity.Status;
-import taylor.project.projecttracker.Exception.ProjectNotFoundExpetion;
-import taylor.project.projecttracker.Record.ProjectRecords.CreateProjectRequest;
-import taylor.project.projecttracker.Record.ProjectRecords.ProjectResponse;
-import taylor.project.projecttracker.Record.ProjectRecords.UpdateProjectRequest;
-import taylor.project.projecttracker.Repository.AuditLogRepository;
-import taylor.project.projecttracker.Repository.ProjectRepository;
-import taylor.project.projecttracker.Repository.TaskRepository;
-import taylor.project.projecttracker.Service.ProjectService;
+import taylor.project.projecttracker.entity.Project;
+import taylor.project.projecttracker.entity.Status;
+import taylor.project.projecttracker.exception.ProjectNotFoundExpetion;
+import taylor.project.projecttracker.dto.ProjectRecords.CreateProjectRequest;
+import taylor.project.projecttracker.dto.ProjectRecords.ProjectResponse;
+import taylor.project.projecttracker.dto.ProjectRecords.UpdateProjectRequest;
+import taylor.project.projecttracker.repository.AuditLogRepository;
+import taylor.project.projecttracker.repository.ProjectRepository;
+import taylor.project.projecttracker.repository.TaskRepository;
+import taylor.project.projecttracker.service.ProjectService;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -89,7 +88,7 @@ class ProjectServiceTest {
 
     @Test
     void updateProject_shouldUpdateAndLog() {
-        UpdateProjectRequest request = new UpdateProjectRequest("Beta", "Beta project", LocalDateTime.now().plusDays(15), Status.COMPLETED);
+        CreateProjectRequest request = new CreateProjectRequest("Beta", "Beta project", LocalDateTime.now().plusDays(15), Status.COMPLETED);
         when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
         when(projectRepository.save(any())).thenReturn(project);
 

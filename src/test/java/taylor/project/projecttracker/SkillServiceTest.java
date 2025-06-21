@@ -6,13 +6,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import taylor.project.projecttracker.Entity.Skill;
-import taylor.project.projecttracker.Entity.User;
-import taylor.project.projecttracker.Exception.SkillNotFoundException;
-import taylor.project.projecttracker.Repository.AuditLogRepository;
-import taylor.project.projecttracker.Repository.SkillRepository;
-import taylor.project.projecttracker.Repository.UserRepository;
-import taylor.project.projecttracker.Service.SkillService;
+import taylor.project.projecttracker.entity.Skill;
+import taylor.project.projecttracker.entity.User;
+import taylor.project.projecttracker.exception.SkillNotFoundException;
+import taylor.project.projecttracker.repository.AuditLogRepository;
+import taylor.project.projecttracker.repository.SkillRepository;
+import taylor.project.projecttracker.repository.UserRepository;
+import taylor.project.projecttracker.service.SkillService;
 
 import java.util.*;
 

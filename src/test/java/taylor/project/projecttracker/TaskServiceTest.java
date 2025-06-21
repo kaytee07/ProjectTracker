@@ -10,16 +10,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.data.domain.Sort;
-import taylor.project.projecttracker.Entity.Project;
-import taylor.project.projecttracker.Entity.Status;
-import taylor.project.projecttracker.Entity.Task;
-import taylor.project.projecttracker.Entity.User;
-import taylor.project.projecttracker.Record.TaskRecords.TaskResponse;
-import taylor.project.projecttracker.Repository.AuditLogRepository;
-import taylor.project.projecttracker.Repository.ProjectRepository;
-import taylor.project.projecttracker.Repository.TaskRepository;
-import taylor.project.projecttracker.Repository.UserRepository;
-import taylor.project.projecttracker.Service.TaskService;
+import taylor.project.projecttracker.entity.Project;
+import taylor.project.projecttracker.entity.Status;
+import taylor.project.projecttracker.entity.Task;
+import taylor.project.projecttracker.entity.User;
+import taylor.project.projecttracker.dto.TaskRecords.TaskResponse;
+import taylor.project.projecttracker.repository.AuditLogRepository;
+import taylor.project.projecttracker.repository.ProjectRepository;
+import taylor.project.projecttracker.repository.TaskRepository;
+import taylor.project.projecttracker.repository.UserRepository;
+import taylor.project.projecttracker.service.TaskService;
 
 public class TaskServiceTest {
 

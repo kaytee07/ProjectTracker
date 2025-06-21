@@ -15,15 +15,13 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import taylor.project.projecttracker.Entity.Project;
-import taylor.project.projecttracker.Entity.Status;
-import taylor.project.projecttracker.Record.ProjectRecords.CreateProjectRequest;
-import taylor.project.projecttracker.Record.ProjectRecords.ProjectResponse;
-import taylor.project.projecttracker.Record.ProjectRecords.ProjectSummary;
-import taylor.project.projecttracker.Record.ProjectRecords.UpdateProjectRequest;
-import taylor.project.projecttracker.Service.ProjectService;
+import taylor.project.projecttracker.entity.Project;
+import taylor.project.projecttracker.entity.Status;
+import taylor.project.projecttracker.dto.ProjectRecords.CreateProjectRequest;
+import taylor.project.projecttracker.dto.ProjectRecords.ProjectResponse;
+import taylor.project.projecttracker.dto.ProjectRecords.ProjectSummary;
+import taylor.project.projecttracker.dto.ProjectRecords.UpdateProjectRequest;
+import taylor.project.projecttracker.service.ProjectService;
 
 
 import java.time.LocalDateTime;
