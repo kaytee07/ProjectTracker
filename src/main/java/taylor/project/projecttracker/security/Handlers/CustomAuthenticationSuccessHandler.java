@@ -24,7 +24,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
         String jwt = jwtTokenUtil.generateToken(oAuth2User);
-        String redirectURL = "https://localhost:8080/api/auth/oauth2/success?token=" + jwt;
+        String redirectURL = "http://localhost:8080/api/auth/oauth2/success?token=" + jwt;
         response.sendRedirect(redirectURL);
     }
 }

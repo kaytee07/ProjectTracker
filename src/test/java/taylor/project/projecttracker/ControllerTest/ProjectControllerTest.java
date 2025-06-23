@@ -105,7 +105,7 @@ class ProjectControllerTest {
     @Test
     @WithMockUser(roles = "MANAGER")
     void updateProject_shouldAllowForManagerOrAdmin() throws Exception {
-        UpdateProjectRequest request = new UpdateProjectRequest("New Title", "New Description", LocalDateTime.now(), Status.IN_PROGRESS);
+        CreateProjectRequest request = new CreateProjectRequest("New Title", "New Description", LocalDateTime.now(), Status.IN_PROGRESS);
 
         Mockito.when(projectService.updateProject(1L, request, "manager@example.com"))
                 .thenReturn(projectResponse);
