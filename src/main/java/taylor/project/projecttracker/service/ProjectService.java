@@ -48,7 +48,7 @@ public class ProjectService {
     @Cacheable(value = "projects", key = "#projectId")
     public Project findProjectById(Long projectId) {
         return projectRepository.findById(projectId)
-                .orElseThrow(() -> new EntityNotFoundException("Project with ID " + projectId + " not found"));
+                .orElseThrow(() -> new ProjectNotFoundExpetion("Project with ID " + projectId + " not found"));
     }
 
     @Cacheable(value = "allProjects", key = "'all'")

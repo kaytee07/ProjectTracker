@@ -11,14 +11,13 @@ import java.util.stream.Collectors;
 
 public class TaskMapper {
 
-    public static Task toEntity(CreateTaskRequest request, Project project, User user) {
+    public static Task toEntity(CreateTaskRequest request, Project project) {
         Task task = new Task();
         task.setTitle(request.title());
         task.setDescription(request.description());
         task.setDueDate(request.dueDate());
         task.setStatus(request.status());
         task.setProject(project);
-        task.setUser(user);
         return task;
     }
 

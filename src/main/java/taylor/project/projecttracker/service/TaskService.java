@@ -10,6 +10,7 @@ import taylor.project.projecttracker.entity.Project;
 import taylor.project.projecttracker.entity.Task;
 import taylor.project.projecttracker.entity.User;
 import taylor.project.projecttracker.exception.TaskNotFoundException;
+import taylor.project.projecttracker.exception.UserNotFoundException;
 import taylor.project.projecttracker.mappers.TaskMapper;
 import taylor.project.projecttracker.dto.TaskRecords.CreateTaskRequest;
 import taylor.project.projecttracker.dto.TaskRecords.TaskResponse;
@@ -32,9 +33,7 @@ public class TaskService {
     private final UserRepository userRepository;
 
     public Task createTask(CreateTaskRequest task, String actorName, Project project) {
-        Optional<User> user = userRepository.findById(task.developerId());
-        User foundUser = user.orElseThrow(() -> new TaskNotFoundException("User not found"));
-        Task saved = taskRepository.save(TaskMapper.toEntity(task, project, foundUser));
+        Task saved = taskRepository.save(TaskMapper.toEntity(task, project));
         logAction("CREATE", "Task", String.valueOf(saved.getId()), actorName, TaskMapper.toResponse(saved));
         return saved;
     }

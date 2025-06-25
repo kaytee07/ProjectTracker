@@ -71,7 +71,7 @@ public class SecurityConfig {
                         BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/swagger-ui/**", "/v3/**","/api/auth/refresh-token", "/h2-console/**", "/admin/**").hasRole("ADMIN")
-                        .requestMatchers("api/projects", "/api/projects/{id}").hasAnyRole("ADMIN", "MANAGER")
+                        .requestMatchers("/api/projects", "/api/projects/{id}").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers("/api/tasks/{id}").hasRole("DEVELOPER")
                         .requestMatchers("/api/users", "/api/users/{id}").hasRole("ADMIN")
                         .requestMatchers("/api/projects/summaries").hasRole("CONTRACTOR")
