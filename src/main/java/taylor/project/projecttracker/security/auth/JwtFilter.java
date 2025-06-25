@@ -14,6 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import taylor.project.projecttracker.exception.UserNotFoundException;
 import taylor.project.projecttracker.security.util.JwtTokenUtil;
 
 import javax.crypto.SecretKey;
@@ -55,8 +56,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 List<SimpleGrantedAuthority> authorities = roles.stream()
                         .map(SimpleGrantedAuthority::new)
                         .toList();
-
-                System.out.println(authorities + " " + username);
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
                         username, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -69,6 +68,11 @@ public class JwtFilter extends OncePerRequestFilter {
                 response.getWriter().write("Invalid or tampered token.");
                 return;
             }
+        } else {
+            logger.warn("JWT token is missing from Authorization header.");
+            SecurityContextHolder.clearContext();
+            throw new UserNotFoundException("log in to continue ");
+
         }
         filterChain.doFilter(request, response);
     }
@@ -77,6 +81,6 @@ public class JwtFilter extends OncePerRequestFilter {
     public boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
         System.out.println(path);
-        return path.equals("/auth/login") || path.equals("/api/auth/register");
+        return path.equals("/auth/login") || path.equals("/api/auth/register") || path.startsWith("/actuator/");
     }
 }

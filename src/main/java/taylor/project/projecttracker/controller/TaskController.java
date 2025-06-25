@@ -27,7 +27,6 @@ public class TaskController {
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @PostMapping
     public ResponseEntity<TaskResponse> createTask(@Valid @RequestBody CreateTaskRequest request, @RequestParam String actorName) {
-        System.out.println(request.projectId());
         Project project = projectService.findProjectById(request.projectId());
         return ResponseEntity.ok(TaskMapper.toResponse(taskService.createTask(request, actorName, project)));
     }
@@ -58,6 +57,7 @@ public class TaskController {
     public ResponseEntity<TaskResponse> assignTask(@PathVariable Long taskId, @PathVariable Long developerId, @RequestParam String actorName) {
         return ResponseEntity.ok(taskService.assignTaskToDeveloper(taskId, developerId, actorName));
     }
+
 
     @GetMapping("/tasks/overdue")
     public ResponseEntity<List<TaskResponse>> getOverdueTasks() {

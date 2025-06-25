@@ -75,6 +75,11 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User not found with id " + id));
     }
 
+    public User findUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found with email " + username));
+    }
+
     @Cacheable(value = "users")
     public List<User> findAllUsers() {
         return userRepository.findAll();

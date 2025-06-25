@@ -4,19 +4,21 @@ import taylor.project.projecttracker.entity.Project;
 import taylor.project.projecttracker.entity.Task;
 import taylor.project.projecttracker.dto.TaskRecords.CreateTaskRequest;
 import taylor.project.projecttracker.dto.TaskRecords.TaskResponse;
+import taylor.project.projecttracker.entity.User;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class TaskMapper {
 
-    public static Task toEntity( CreateTaskRequest request, Project project ) {
+    public static Task toEntity(CreateTaskRequest request, Project project, User user) {
         Task task = new Task();
         task.setTitle(request.title());
         task.setDescription(request.description());
         task.setDueDate(request.dueDate());
         task.setStatus(request.status());
         task.setProject(project);
+        task.setUser(user);
         return task;
     }
 
@@ -29,8 +31,6 @@ public class TaskMapper {
                 task.getStatus(),
                 task.getProject() != null ? task.getProject().getId() : null,
                 task.getUser() != null ? task.getUser().getId() : null
-
-
         );
     }
 

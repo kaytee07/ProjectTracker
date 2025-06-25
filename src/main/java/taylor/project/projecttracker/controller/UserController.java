@@ -7,6 +7,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import taylor.project.projecttracker.dto.TaskRecords.TaskResponse;
+import taylor.project.projecttracker.entity.Task;
+import taylor.project.projecttracker.repository.TaskRepository;
 import taylor.project.projecttracker.security.auth.SecurityUser;
 import taylor.project.projecttracker.entity.Role;
 import taylor.project.projecttracker.entity.User;
@@ -14,6 +17,7 @@ import taylor.project.projecttracker.mappers.UserMapper;
 import taylor.project.projecttracker.dto.UserRecords.UserResponse;
 import taylor.project.projecttracker.repository.UserRepository;
 import taylor.project.projecttracker.security.service.CustomUserDetailsService;
+import taylor.project.projecttracker.service.TaskService;
 import taylor.project.projecttracker.service.UserService;
 
 import java.util.List;
@@ -24,13 +28,16 @@ public class UserController {
 
     private final UserService userService;
     private final CustomUserDetailsService customUserDetailsService;
-    private final UserRepository userRepository;
+    private final TaskService taskService;
     SecurityUser securityUser;
 
-    public UserController(UserService userService, UserRepository userRepository, CustomUserDetailsService customUserDetailsService) {
+    public UserController(UserService userService,
+                          CustomUserDetailsService customUserDetailsService,
+                          TaskService taskService
+                          ) {
         this.userService = userService;
-        this.userRepository = userRepository;
         this.customUserDetailsService = customUserDetailsService;
+        this.taskService = taskService;
 
     }
 
@@ -44,8 +51,7 @@ public class UserController {
     @GetMapping("/users/me")
     public ResponseEntity<UserResponse> getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(auth.getName())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + auth.getName()));
+        User user = userService.findUserByUsername(auth.getName());
         return ResponseEntity.ok(UserMapper.toResponse(user));
     }
 
@@ -66,6 +72,14 @@ public class UserController {
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         User user = userService.getUser(id);
         return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("users/{id}/tasks")
+    public ResponseEntity<List<TaskResponse>> getUserTask(@PathVariable Long id) {
+        User user = userService.getUser(id);
+        System.out.println(user);
+        List<TaskResponse> userTask = taskService.findTaskByUserId(id);
+        return ResponseEntity.ok(userTask);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")

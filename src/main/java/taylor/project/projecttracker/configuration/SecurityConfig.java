@@ -1,6 +1,7 @@
 package taylor.project.projecttracker.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.ProviderManager;
@@ -69,15 +70,15 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtFilter(signingKey, jwtTokenUtil),
                         BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/login", "/api/auth/register").permitAll()
-                        .requestMatchers("/api/auth/refresh-token").hasRole("ADMIN")
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/swagger-ui/**", "/v3/**", "/h2-console/**").hasRole("ADMIN")
+                        .requestMatchers("/swagger-ui/**", "/v3/**","/api/auth/refresh-token", "/h2-console/**", "/admin/**").hasRole("ADMIN")
                         .requestMatchers("api/projects", "/api/projects/{id}").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers("/api/tasks/{id}").hasRole("DEVELOPER")
                         .requestMatchers("/api/users", "/api/users/{id}").hasRole("ADMIN")
                         .requestMatchers("/api/projects/summaries").hasRole("CONTRACTOR")
+                        .requestMatchers(EndpointRequest.to("health", "info", "prometheus")).permitAll()
+                        .requestMatchers("/auth/login", "/api/auth/register").permitAll()
                         .anyRequest().authenticated())
+
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService)).successHandler(customAuthenticationSuccessHandler)

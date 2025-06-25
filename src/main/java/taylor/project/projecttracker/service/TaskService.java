@@ -20,6 +20,7 @@ import taylor.project.projecttracker.utilityInterfaces.TaskStatusCount;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,13 +32,19 @@ public class TaskService {
     private final UserRepository userRepository;
 
     public Task createTask(CreateTaskRequest task, String actorName, Project project) {
-        Task saved = taskRepository.save(TaskMapper.toEntity(task, project));
+        Optional<User> user = userRepository.findById(task.developerId());
+        User foundUser = user.orElseThrow(() -> new TaskNotFoundException("User not found"));
+        Task saved = taskRepository.save(TaskMapper.toEntity(task, project, foundUser));
         logAction("CREATE", "Task", String.valueOf(saved.getId()), actorName, TaskMapper.toResponse(saved));
         return saved;
     }
 
     public Task findTaskById(Long taskId) {
         return taskRepository.findById(taskId).orElseThrow(()-> new TaskNotFoundException("Task not found"));
+    }
+
+    public List<TaskResponse> findTaskByUserId(Long userId){
+        return  TaskMapper.toResponseList(taskRepository.findTasksByUserId(userId));
     }
 
     @CacheEvict(value = {"tasks", "taskStatusCounts", "overdueTasks", "sortedTasks"}, key = "#id")

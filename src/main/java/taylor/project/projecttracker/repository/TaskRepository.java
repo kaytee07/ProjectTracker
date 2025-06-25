@@ -23,4 +23,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findOverdueTasks();
     @Query("SELECT t.status AS status, COUNT(t) AS count FROM Task t GROUP BY t.status")
     List<TaskStatusCount> countTasksByStatus();
+
+    List<Task> findTasksByUserId(Long userId);
 }
