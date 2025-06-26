@@ -75,7 +75,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/tasks/{id}").hasRole("DEVELOPER")
                         .requestMatchers("/api/users", "/api/users/{id}").hasRole("ADMIN")
                         .requestMatchers("/api/projects/summaries").hasRole("CONTRACTOR")
-                        .requestMatchers(EndpointRequest.to("health", "info", "prometheus")).permitAll()
+                        .requestMatchers(EndpointRequest.to("health", "info", "prometheus","metrics", "threaddump")).permitAll()
                         .requestMatchers("/auth/login", "/api/auth/register").permitAll()
                         .anyRequest().authenticated())
 
