@@ -1,3 +1,6 @@
+## Test parameters
+![Alt text](shots/test paramters.png)
+
 ## preotimization
 ![Alt text](shots/preoptimization(300 threads).png)
 
@@ -227,4 +230,23 @@ Analysis of the application under 300 concurrent threads reveals:
 - Cache invalidation strategy needs monitoring
 - Record types may require adaptation for JPA entities
 - ServiceLoader cache TTL may need environment-specific tuning
+
+## GC Configuration
+GC pause times and frequency
+- with JVM flags:
+    - Xmx512m -Xms512m
+    - XX:+UseG1GC
+    - XX:+PrintGCDetails
+    - XX:+HeapDumpOnOutOfMemoryError
+# GIGC Garbage collector Configuration
+![Alt text](shots/G1GC.jpg)
+
+# ZGC Garbage collector Configuration Capture
+![Alt text](shots/ZGC.jpg)
+
+# ParallelIGC collector Configuration Capture
+![Alt text](shots/ParallelGC.jpg)
+
+# ConcMarkSweepGC collector Configuration Capture
+![Alt text](shots/ConCMarkSwapGC.jpg)
 

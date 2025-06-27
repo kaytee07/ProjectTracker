@@ -16,8 +16,7 @@ public class TaskMetricsService {
     }
 
     public void processTask() {
-        // Your task processing logic here
-        tasksProcessedCounter.increment(); // Increment the counter
+        tasksProcessedCounter.increment(); 
         System.out.println("Task processed!");
     }
 }

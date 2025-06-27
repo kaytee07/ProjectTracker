@@ -30,7 +30,7 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final AuditLogRepository auditLogRepository;
     private final TaskRepository taskRepository;
-
+    private final TaskMetricsService taskMetricsService;
 
     @Transactional
     @CacheEvict(value = {"projects", "allProjects", "projectsWithoutTasks"}, allEntries = true)
@@ -53,6 +53,7 @@ public class ProjectService {
 
     @Cacheable(value = "allProjects", key = "'all'")
     public List<ProjectResponse> findAllProjects() {
+        taskMetricsService.processTask();
         return ProjectMapper.toResponseList(projectRepository.findAll());
     }
 
