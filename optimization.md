@@ -1,8 +1,8 @@
 ## preotimization
--img
+![Alt text](shots/preoptimization(300 threads).png)
 
 ## post optimization
--img
+-![Alt text](shots/postoptimization(300 threads).png)
 
 # 🧪 JMeter Performance Comparison Report
 
@@ -83,7 +83,7 @@ The switch to **caching**, **DTOs**, and **mappers** has significantly:
 ---
 
 ## J profiler pre otimization report
-- image
+- ![Alt text](shots/preoptimization jprofiler overview.png)
 # JProfiler Analysis Report
 
 ## Summary
@@ -148,7 +148,7 @@ Analysis of the application under 300 concurrent threads reveals:
 
 
 # Performance Optimization Report
--img
+- ![Alt text](shots/postoptimizationjprofileroverview.png) 
 ## Performance Issues Discovered
 
 ### CPU Bottlenecks

@@ -9,12 +9,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import taylor.project.projecttracker.entity.Project;
 import taylor.project.projecttracker.mappers.ProjectMapper;
 import taylor.project.projecttracker.dto.ProjectRecords.CreateProjectRequest;
 import taylor.project.projecttracker.dto.ProjectRecords.ProjectResponse;
 import taylor.project.projecttracker.dto.ProjectRecords.ProjectSummary;
 import taylor.project.projecttracker.dto.ProjectRecords.UpdateProjectRequest;
 import taylor.project.projecttracker.service.ProjectService;
+import taylor.project.projecttracker.service.TaskMetricsService;
 
 import java.util.List;
 
@@ -25,6 +27,7 @@ import java.util.List;
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final TaskMetricsService taskMetricsService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -60,6 +63,7 @@ public class ProjectController {
 
     @GetMapping
     public ResponseEntity<List<ProjectResponse>> getAllProjects() {
+        taskMetricsService.processTask();
         return ResponseEntity.ok(projectService.findAllProjects());
     }
 

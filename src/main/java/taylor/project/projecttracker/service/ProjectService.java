@@ -12,7 +12,6 @@ import taylor.project.projecttracker.mappers.ProjectMapper;
 import taylor.project.projecttracker.dto.ProjectRecords.CreateProjectRequest;
 import taylor.project.projecttracker.dto.ProjectRecords.ProjectResponse;
 import taylor.project.projecttracker.dto.ProjectRecords.ProjectSummary;
-import taylor.project.projecttracker.dto.ProjectRecords.UpdateProjectRequest;
 import taylor.project.projecttracker.repository.AuditLogRepository;
 import taylor.project.projecttracker.repository.ProjectRepository;
 import taylor.project.projecttracker.repository.TaskRepository;
@@ -31,6 +30,7 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final AuditLogRepository auditLogRepository;
     private final TaskRepository taskRepository;
+
 
     @Transactional
     @CacheEvict(value = {"projects", "allProjects", "projectsWithoutTasks"}, allEntries = true)

@@ -38,6 +38,7 @@ public class CacheConfig {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
         cacheManager.setCaffeine(caffeineBuilder());
         cacheManager.setCacheNames(cacheNames);
+        cacheManager.setCaffeine(Caffeine.newBuilder().recordStats());
         return cacheManager;
     }
 

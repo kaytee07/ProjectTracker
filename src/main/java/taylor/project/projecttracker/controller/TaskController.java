@@ -11,6 +11,7 @@ import taylor.project.projecttracker.dto.TaskRecords.CreateTaskRequest;
 import taylor.project.projecttracker.dto.TaskRecords.TaskResponse;
 import taylor.project.projecttracker.dto.TaskRecords.UpdateTaskRequest;
 import taylor.project.projecttracker.service.ProjectService;
+import taylor.project.projecttracker.service.TaskMetricsService;
 import taylor.project.projecttracker.service.TaskService;
 import taylor.project.projecttracker.utilityInterfaces.TaskStatusCount;
 
@@ -31,8 +32,9 @@ public class TaskController {
         return ResponseEntity.ok(TaskMapper.toResponse(taskService.createTask(request, actorName, project)));
     }
 
+
     @GetMapping("/{id}")
-    public ResponseEntity<TaskResponse> getTaskById(@RequestParam Long id) {
+    public ResponseEntity<TaskResponse> getTaskById(@PathVariable Long id) {
         return ResponseEntity.ok(TaskMapper.toResponse(taskService.findTaskById(id)));
     }
     @PreAuthorize("hasRole('DEVELOPER') and @securityUtil.isOwner(#id, authentication.name)")
