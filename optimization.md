@@ -86,7 +86,7 @@ The switch to **caching**, **DTOs**, and **mappers** has significantly:
 ---
 
 ## J profiler pre otimization report
-- ![Alt text](shots/preoptimization jprofiler overview.png)
+- ![Alt text](shots/preoptimization%20jprofiler%20overview.png)
 # JProfiler Analysis Report
 
 ## Summary
