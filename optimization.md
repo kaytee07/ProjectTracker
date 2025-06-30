@@ -1,11 +1,11 @@
 ## Test parameters
-![Alt text](shots/test paramters.png)
+![](shots/test%20paramters.png)
 
 ## preotimization
-![Alt text](shots/preoptimization(300 threads).png)
+![Alt text](shots/preoptimization(300%20threads).png)
 
 ## post optimization
--![Alt text](shots/postoptimization(300 threads).png)
+-![Alt text](shots/postoptimization(300%20threads).png)
 
 # 🧪 JMeter Performance Comparison Report
 
